@@ -4,17 +4,18 @@
 import wx
 import math
 from itertools import combinations, permutations
+from datetime import datetime
 
 g_debug = False
 g_prime_list = [1,2,3,5,7,11,13,17,19,23,29,31]
 g_cross_list = [1,6,8,11,15,16,21,22,26,29,31]
 g_outter_list = [1,2,3,4,5,6,7,12,13,18,19,24,25,30,31,32,33]
-g_size = (720, 900)
+g_size = (600, 680)
+g_border = 3
+g_fontsize = 14
 
-if g_size:
-    g_style = wx.DEFAULT_FRAME_STYLE & ~(wx.RESIZE_BORDER | wx.MAXIMIZE_BOX)
-else:
-    g_style = wx.DEFAULT_FRAME_STYLE
+#g_style = wx.DEFAULT_FRAME_STYLE & ~(wx.RESIZE_BORDER | wx.MAXIMIZE_BOX)
+g_style = wx.DEFAULT_FRAME_STYLE
 
 def valid(n):
     return n != -1 and n != []
@@ -80,7 +81,7 @@ def count_cont_n(n_list):
 def count_big_n(n_list):
     cnt = 0
     for i in n_list:
-        if i >= 16:
+        if i > 16:
             cnt += 1
     return cnt
 
@@ -168,61 +169,112 @@ class DBallFrame(wx.Frame):
         self.__set_properties()
         self.__create_objects()
         self.__do_layout()
+        self.__do_setfont()
+
+    def __do_setfont(self):
+        for item in self.items_all:
+            item.SetFont(self.font)
 
     def __create_objects(self):
         # Including bindings of the objects (mostly, buttons)
+        self.font = wx.Font(wx.FontInfo(g_fontsize).Bold())
         self.text_out = wx.TextCtrl(self, wx.ID_ANY, "",
-                                    size=(-1, 100),
+                                    size=(-1, 80),
                                     style=wx.TE_MULTILINE | wx.TE_READONLY)
+        self.items_all = [self.text_out]
+        self.buttons = []
         self.button_gen = wx.Button(self, wx.ID_ANY, "生成结果")
+        self.button_reset = wx.Button(self, wx.ID_ANY, "重置参数")
         self.button_quit = wx.Button(self, wx.ID_ANY, "退出")
+        self.buttons.append(self.button_gen)
+        self.buttons.append(self.button_reset)
+        self.buttons.append(self.button_quit)
+        self.items_all += self.buttons
+
         self.sum_low = wx.TextCtrl(self, wx.ID_ANY, "")
         self.sum_high = wx.TextCtrl(self, wx.ID_ANY, "")
         self.first_odd = wx.Choice(self, wx.ID_ANY,
                                    choices=["任意", "奇数", "偶数"])
         self.last_odd = wx.Choice(self, wx.ID_ANY,
                                   choices=["任意", "奇数", "偶数"])
+        self.items_all += [self.sum_low, self.sum_high]
+        self.items_all += [self.first_odd, self.last_odd]
 
+        self.checkboxes = []
         self.numbers = []
         for i in range(1, 34):
             box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
             self.numbers.append(box)
+            self.checkboxes.append(box)
         self.primes = []
         for i in range(0, 7):
-            self.primes.append(wx.CheckBox(self, wx.ID_ANY, "%s:%s" % (i, 6-i)))
+            box = wx.CheckBox(self, wx.ID_ANY, "%s:%s" % (i, 6-i))
+            self.primes.append(box)
+            self.checkboxes.append(box)
         self.odds = []
         for i in range(0, 7):
-            self.odds.append(wx.CheckBox(self, wx.ID_ANY, "%s:%s" % (i, 6-i)))
+            box = wx.CheckBox(self, wx.ID_ANY, "%s:%s" % (i, 6-i))
+            self.odds.append(box)
+            self.checkboxes.append(box)
         self.bigs = []
         for i in range(0, 7):
-            self.bigs.append(wx.CheckBox(self, wx.ID_ANY, "%s:%s" % (i, 6-i)))
+            box = wx.CheckBox(self, wx.ID_ANY, "%s:%s" % (i, 6-i))
+            self.bigs.append(box)
+            self.checkboxes.append(box)
         self.acs = []
         for i in range(1, 11):
-            self.acs.append(wx.CheckBox(self, wx.ID_ANY, "%s" % i))
+            box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
+            self.acs.append(box)
+            self.checkboxes.append(box)
         self.diff_tails = []
         for i in range(3, 7):
-            self.diff_tails.append(wx.CheckBox(self, wx.ID_ANY, "%s" % i))
+            box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
+            self.diff_tails.append(box)
+            self.checkboxes.append(box)
         self.crosses = []
         for i in range(0, 7):
-            self.crosses.append(wx.CheckBox(self, wx.ID_ANY, "%s" % i))
+            box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
+            self.crosses.append(box)
+            self.checkboxes.append(box)
         self.outters = []
         for i in range(0, 7):
-            self.outters.append(wx.CheckBox(self, wx.ID_ANY, "%s" % i))
+            box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
+            self.outters.append(box)
+            self.checkboxes.append(box)
         self.conts = []
         for i in range(0, 6):
-            self.conts.append(wx.CheckBox(self, wx.ID_ANY, "%s" % i))
+            box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
+            self.conts.append(box)
+            self.checkboxes.append(box)
+        self.items_all += self.checkboxes
 
         self.Bind(wx.EVT_BUTTON, self.do_generate, self.button_gen)
+        self.Bind(wx.EVT_BUTTON, self.do_reset, self.button_reset)
         self.Bind(wx.EVT_BUTTON, self.do_quit, self.button_quit)
+
+    def do_reset(self, event):
+        self.clear()
+        for box in self.checkboxes:
+            box.SetValue(False)
+        self.sum_low.SetValue("")
+        self.sum_high.SetValue("")
+        self.first_odd.SetSelection(-1)
+        self.last_odd.SetSelection(-1)
+        self.out("所有参数已重置！")
 
     def __set_properties(self):
         if g_size:
             self.SetSize(g_size)
-        self.SetBackgroundColour(wx.Colour(94, 95, 95))
+        # self.SetBackgroundColour(wx.Colour(94, 95, 95))
+
+    def new_static(self, value):
+        static = wx.StaticText(self, wx.ID_ANY, value)
+        self.items_all.append(static)
+        return static
 
     def __do_layout(self):
         sizer_all = wx.FlexGridSizer(2, 1, 5, 5)
-        sizer_buttons = wx.GridSizer(1, 2, 5, 5)
+        sizer_buttons = wx.GridSizer(1, 3, 5, 5)
         sizer_conds = wx.FlexGridSizer(15, 2, 10, 10)
 
         sizer_numbers = wx.GridSizer(6, 6, 3, 3)
@@ -265,18 +317,21 @@ class DBallFrame(wx.Frame):
             sizer_bigs.Add(big, proportion=1, border=0,
                            flag=wx.TOP|wx.BOTTOM|wx.LEFT|wx.RIGHT|wx.EXPAND)
         sizer_sum = wx.GridSizer(1, 6, 3, 3)
-        sizer_sum.Add(wx.StaticText(self, wx.ID_ANY, "从"),
+        sizer_sum.Add(self.new_static("从"),
                       proportion=1, border=0,
                       flag=wx.ALIGN_CENTER)
         sizer_sum.Add(self.sum_low, proportion=1, border=0)
-        sizer_sum.Add(wx.StaticText(self, wx.ID_ANY, "到"),
+        sizer_sum.Add(self.new_static(""),
+                      proportion=1, border=0,
+                      flag=wx.ALIGN_CENTER)
+        sizer_sum.Add(self.new_static("到"),
                       proportion=1, border=0,
                       flag=wx.ALIGN_CENTER)
         sizer_sum.Add(self.sum_high, proportion=1, border=0)
 
-        sizer_all.Add(sizer_conds, proportion=1, border=10,
+        sizer_all.Add(sizer_conds, proportion=1, border=g_border,
                       flag=wx.TOP|wx.BOTTOM|wx.LEFT|wx.RIGHT|wx.EXPAND)
-        sizer_all.Add(sizer_buttons, proportion=1, border=10,
+        sizer_all.Add(sizer_buttons, proportion=1, border=g_border,
                       flag=wx.TOP|wx.BOTTOM|wx.LEFT|wx.RIGHT|wx.EXPAND|
                       wx.ALIGN_BOTTOM)
         sizer_conts = wx.GridSizer(1, 6, 3, 3)
@@ -284,57 +339,51 @@ class DBallFrame(wx.Frame):
             sizer_conts.Add(cont, proportion=1, border=0,
                            flag=wx.TOP|wx.BOTTOM|wx.LEFT|wx.RIGHT|wx.EXPAND)
 
-        helpmsg = """请对以下过滤条件进行配置，配置完成后点击“生成结果”会产生计算结果。
-其中，数字需要至少选择6个。其他参数如果没有任何选择，则默认忽略该参数。"""
-
-        sizer_conds.Add(wx.StaticText(self, wx.ID_ANY, "说明："))
-        sizer_conds.Add(wx.StaticText(self, wx.ID_ANY, helpmsg),
-                        flag=wx.ALIGN_TOP)
-        sizer_conds.Add(wx.StaticText(self, wx.ID_ANY, "选择数字："))
-        sizer_conds.Add(sizer_numbers, proportion=1, border=10,
+        sizer_conds.Add(self.new_static("选择数字："))
+        sizer_conds.Add(sizer_numbers, proportion=1, border=g_border,
                         flag=wx.LEFT|wx.RIGHT|wx.EXPAND)
-        sizer_conds.Add(wx.StaticText(self, wx.ID_ANY, "质和比："))
-        sizer_conds.Add(sizer_primes, proportion=1, border=10,
+        sizer_conds.Add(self.new_static("质和比："))
+        sizer_conds.Add(sizer_primes, proportion=1, border=g_border,
                         flag=wx.LEFT|wx.RIGHT|wx.EXPAND)
-        sizer_conds.Add(wx.StaticText(self, wx.ID_ANY, "奇偶比："))
-        sizer_conds.Add(sizer_odds, proportion=1, border=10,
+        sizer_conds.Add(self.new_static("奇偶比："))
+        sizer_conds.Add(sizer_odds, proportion=1, border=g_border,
                         flag=wx.LEFT|wx.RIGHT|wx.EXPAND)
-        sizer_conds.Add(wx.StaticText(self, wx.ID_ANY, "大小比："))
-        sizer_conds.Add(sizer_bigs, proportion=1, border=10,
+        sizer_conds.Add(self.new_static("大小比："))
+        sizer_conds.Add(sizer_bigs, proportion=1, border=g_border,
                         flag=wx.LEFT|wx.RIGHT|wx.EXPAND)
-        sizer_conds.Add(wx.StaticText(self, wx.ID_ANY, "AC值："))
-        sizer_conds.Add(sizer_acs, proportion=1, border=10,
+        sizer_conds.Add(self.new_static("AC值："))
+        sizer_conds.Add(sizer_acs, proportion=1, border=g_border,
                         flag=wx.LEFT|wx.RIGHT|wx.EXPAND)
-        sizer_conds.Add(wx.StaticText(self, wx.ID_ANY, "不同尾数个数："))
-        sizer_conds.Add(sizer_diff_tails, proportion=1, border=10,
+        sizer_conds.Add(self.new_static("不同尾数个数："))
+        sizer_conds.Add(sizer_diff_tails, proportion=1, border=g_border,
                         flag=wx.LEFT|wx.RIGHT|wx.EXPAND)
-        sizer_conds.Add(wx.StaticText(self, wx.ID_ANY, "对角线个数："))
-        sizer_conds.Add(sizer_crosses, proportion=1, border=10,
+        sizer_conds.Add(self.new_static("对角线个数："))
+        sizer_conds.Add(sizer_crosses, proportion=1, border=g_border,
                         flag=wx.LEFT|wx.RIGHT|wx.EXPAND)
-        sizer_conds.Add(wx.StaticText(self, wx.ID_ANY, "外围个数："))
-        sizer_conds.Add(sizer_outters, proportion=1, border=10,
+        sizer_conds.Add(self.new_static("外围个数："))
+        sizer_conds.Add(sizer_outters, proportion=1, border=g_border,
                         flag=wx.LEFT|wx.RIGHT|wx.EXPAND)
-        sizer_conds.Add(wx.StaticText(self, wx.ID_ANY, "首位奇偶："))
-        sizer_conds.Add(self.first_odd, proportion=1, border=10,
+        sizer_conds.Add(self.new_static("首位奇偶："))
+        sizer_conds.Add(self.first_odd, proportion=1, border=g_border,
                         flag=wx.LEFT|wx.RIGHT|wx.EXPAND)
-        sizer_conds.Add(wx.StaticText(self, wx.ID_ANY, "末位奇偶："))
-        sizer_conds.Add(self.last_odd, proportion=1, border=10,
+        sizer_conds.Add(self.new_static("末位奇偶："))
+        sizer_conds.Add(self.last_odd, proportion=1, border=g_border,
                         flag=wx.LEFT|wx.RIGHT|wx.EXPAND)
-        sizer_conds.Add(wx.StaticText(self, wx.ID_ANY, "和值范围："))
-        sizer_conds.Add(sizer_sum, proportion=1, border=10,
+        sizer_conds.Add(self.new_static("和值范围："))
+        sizer_conds.Add(sizer_sum, proportion=1, border=g_border,
                         flag=wx.LEFT|wx.RIGHT|wx.EXPAND)
-        sizer_conds.Add(wx.StaticText(self, wx.ID_ANY, "连号个数："))
-        sizer_conds.Add(sizer_conts, proportion=1, border=10,
+        sizer_conds.Add(self.new_static("连号个数："))
+        sizer_conds.Add(sizer_conts, proportion=1, border=g_border,
                         flag=wx.LEFT|wx.RIGHT|wx.EXPAND)
 
-        sizer_conds.Add(wx.StaticText(self, wx.ID_ANY, "输出结果："))
-        sizer_conds.Add(self.text_out, proportion=1, border=10,
+        sizer_conds.Add(self.new_static("输出结果："))
+        sizer_conds.Add(self.text_out, proportion=1, border=g_border,
                         flag=wx.LEFT|wx.RIGHT|wx.EXPAND)
 
-        for button in [self.button_gen, self.button_quit]:
+        for button in self.buttons:
             sizer_buttons.Add(button, proportion=1,
                               flag=wx.EXPAND|wx.BOTTOM|wx.RIGHT|wx.ALIGN_RIGHT,
-                              border=10)
+                              border=g_border)
 
         self.SetSizer(sizer_all)
         self.Layout()
@@ -437,7 +486,7 @@ class DBallFrame(wx.Frame):
             return
 
         if g_debug:
-            self.out("=============缩水条件=============")
+            self.out("==缩水条件==")
             self.out("所选数字: %s" % nums)
             self.out("质数个数: %s" % (primes if primes else "<任意>"))
             self.out("奇数个数: %s" % (odds if odds else "<任意>"))
@@ -452,7 +501,6 @@ class DBallFrame(wx.Frame):
                      (sum_low if sum_low is not -1 else "<任意>",
                       sum_high if sum_high is not -1 else "<任意>"))
             self.out("连号个数: %s" % (conts if conts else "<任意>"))
-        self.out("=============缩水中…=============")
         params = {
             "num_list": nums,
             "prime_n": primes,
@@ -469,13 +517,13 @@ class DBallFrame(wx.Frame):
             "cont_n": conts,
         }
         result = dball_calc(params)
-        self.out("=============缩水结果=============")
+        self.out("==缩水结果==")
         if not result:
             self.out("未找到合适的结果，请修改缩水范围后重试。")
         else:
             start = 1
             for entry in result:
-                self.out("第 %s 组结果：%s" % (start, entry))
+                self.out("%03d: %s" % (start, entry))
                 start += 1
 
     def do_quit(self, event):
