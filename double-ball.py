@@ -9,7 +9,7 @@ g_debug = False
 g_prime_list = [1,2,3,5,7,11,13,17,19,23,29,31]
 g_cross_list = [1,6,8,11,15,16,21,22,26,29,31]
 g_outter_list = [1,2,3,4,5,6,7,12,13,18,19,24,25,30,31,32,33]
-g_size = (1150, 700)
+g_size = (1150, 600)
 g_lastwin_size = (250, -1)
 g_output_size = (550, 120)
 g_border = 3
@@ -490,11 +490,11 @@ class DBallFrame(wx.Frame):
         sizer_conds.Add(sizer_range2, border=g_border, flag=g_flag)
         sizer_conds.Add(self.new_static("连号个数："))
         sizer_conds.Add(sizer_conts, border=g_border, flag=g_flag)
+        sizer_conds.Add(self.new_static("不同尾数："))
+        sizer_conds.Add(sizer_diff_tails, border=g_border, flag=g_flag)
 
         sizer_conds_2.Add(self.new_static("奇偶比："))
         sizer_conds_2.Add(sizer_odds, border=g_border, flag=g_flag)
-        sizer_conds_2.Add(self.new_static("不同尾数："))
-        sizer_conds_2.Add(sizer_diff_tails, border=g_border, flag=g_flag)
         sizer_conds_2.Add(self.new_static("首位奇偶："))
         sizer_conds_2.Add(self.first_odd, border=g_border, flag=g_flag)
         sizer_conds_2.Add(self.new_static("末位奇偶："))
@@ -614,9 +614,18 @@ class DBallFrame(wx.Frame):
         else:
             # non-null last win value, we will be strict
             try:
-                s = s.replace(" ", "")
-                last_win = s.split(",")
-                if len(last_win) != 6:
+                s = s.decode("utf-8")
+                s = s.replace(",", " ")
+                s = s.replace(".", " ")
+                s = s.replace("-", " ")
+                s = s.replace(":", " ")
+                s = s.replace("\\", " ")
+                s = s.replace("/", " ")
+                s = s.replace("，".decode("utf-8"), " ")
+                s = s.replace("、".decode("utf-8"), " ")
+                s = s.replace("。".decode("utf-8"), " ")
+                last_win = s.split()
+                if len(set(last_win)) != 6:
                     raise Exception()
                 last_win = map(int, last_win)
                 for i in last_win:
