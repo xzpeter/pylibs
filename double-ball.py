@@ -5,6 +5,9 @@ import wx
 import math
 from itertools import combinations, permutations
 
+# TODO:
+# Fix using Chinese character (search FIXME)
+
 g_debug = False
 g_prime_list = [1,2,3,5,7,11,13,17,19,23,29,31]
 g_cross_list = [1,6,8,11,15,16,21,22,26,29,31]
@@ -621,6 +624,7 @@ class DBallFrame(wx.Frame):
                 s = s.replace(":", " ")
                 s = s.replace("\\", " ")
                 s = s.replace("/", " ")
+                # FIXME: these are still not working
                 s = s.replace("，".decode("utf-8"), " ")
                 s = s.replace("、".decode("utf-8"), " ")
                 s = s.replace("。".decode("utf-8"), " ")
