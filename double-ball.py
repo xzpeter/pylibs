@@ -9,8 +9,9 @@ g_debug = False
 g_prime_list = [1,2,3,5,7,11,13,17,19,23,29,31]
 g_cross_list = [1,6,8,11,15,16,21,22,26,29,31]
 g_outter_list = [1,2,3,4,5,6,7,12,13,18,19,24,25,30,31,32,33]
-g_size = (1150, 600)
-g_output_size = (550, 100)
+g_size = (1150, 700)
+g_lastwin_size = (250, -1)
+g_output_size = (550, 120)
 g_border = 3
 g_fontsize = 14
 g_flag = wx.ALL | wx.EXPAND
@@ -109,6 +110,13 @@ def count_range(n_list, rng):
             cnt += 1
     return cnt
 
+def count_last(n_list, last_win):
+    cnt = 0
+    for i in n_list:
+        if i in last_win:
+            cnt += 1
+    return cnt
+
 def dball_calc(params):
     danma_list = params["danma_list"]
     num_list = params["num_list"]
@@ -131,6 +139,8 @@ def dball_calc(params):
     range0 = params["range0"]
     range1 = params["range1"]
     range2 = params["range2"]
+    last_win = params["last_win"]
+    last_nums = params["last_nums"]
 
     rand_set = combinations(num_list, 6 - len(danma_list))
     input_set = map(lambda x: x + tuple(danma_list), rand_set)
@@ -164,6 +174,9 @@ def dball_calc(params):
         if valid(range1) and count_range(array, 1) not in range1:
             continue
         if valid(range2) and count_range(array, 2) not in range2:
+            continue
+        if valid(last_win) and valid(last_nums) and \
+           count_last(array, last_win) not in last_nums:
             continue
 
         if valid(first_odd):
@@ -206,9 +219,13 @@ class DBallFrame(wx.Frame):
     def __create_objects(self):
         # Including bindings of the objects (mostly, buttons)
         self.font = wx.Font(wx.FontInfo(g_fontsize).Bold())
+
         self.text_out = wx.TextCtrl(self, wx.ID_ANY, "", size=g_output_size,
                                     style=wx.TE_MULTILINE | wx.TE_READONLY)
-        self.items_all = [self.text_out]
+        self.last_win = wx.TextCtrl(self, wx.ID_ANY, "", size=g_lastwin_size)
+
+        self.items_all = [self.text_out, self.last_win]
+
         self.buttons = []
         self.button_gen = wx.Button(self, wx.ID_ANY, "生成结果")
         self.button_reset = wx.Button(self, wx.ID_ANY, "重置参数")
@@ -319,6 +336,12 @@ class DBallFrame(wx.Frame):
             self.conts.append(box)
         self.checkboxes += self.conts
 
+        self.last_nums = []
+        for i in range(0, 5):
+            box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
+            self.last_nums.append(box)
+        self.checkboxes += self.last_nums
+
         self.items_all += self.checkboxes
 
         self.Bind(wx.EVT_BUTTON, self.do_generate, self.button_gen)
@@ -333,6 +356,7 @@ class DBallFrame(wx.Frame):
         self.sum_high.SetValue("")
         self.first_odd.SetSelection(-1)
         self.last_odd.SetSelection(-1)
+        self.last_win.SetValue("")
         self.out("所有参数已重置！")
 
     def __set_properties(self):
@@ -431,12 +455,18 @@ class DBallFrame(wx.Frame):
         sizer_conts = wx.GridSizer(1, 6, 3, 3)
         for cont in self.conts:
             sizer_conts.Add(cont, border=0, flag=g_flag)
+        sizer_last_win = wx.FlexGridSizer(1, 2, 3, 3)
+        sizer_last_win.Add(self.last_win, border=0, flag=g_flag)
+        sizer_last_win.Add(self.new_static("(例:1,2,3,4,5,6)"))
+        sizer_last_nums = wx.GridSizer(1, 5, 3, 3)
+        for item in self.last_nums:
+            sizer_last_nums.Add(item, border=0, flag=g_flag)
 
         sizer_conds.Add(self.new_static("数字选择："))
         sizer_conds.Add(sizer_numbers_in, border=0, flag=g_flag)
         sizer_conds_2.Add(self.new_static("胆码选择："))
         sizer_conds_2.Add(sizer_danma_in, border=0, flag=g_flag)
-        sizer_conds.Add(self.new_static("质和比："))
+        sizer_conds.Add(self.new_static("质合比："))
         sizer_conds.Add(sizer_primes, border=g_border, flag=g_flag)
         sizer_conds.Add(self.new_static("大小比："))
         sizer_conds.Add(sizer_bigs, border=g_border, flag=g_flag)
@@ -458,6 +488,8 @@ class DBallFrame(wx.Frame):
         sizer_conds.Add(sizer_range1, border=g_border, flag=g_flag)
         sizer_conds.Add(self.new_static("第三区间："))
         sizer_conds.Add(sizer_range2, border=g_border, flag=g_flag)
+        sizer_conds.Add(self.new_static("连号个数："))
+        sizer_conds.Add(sizer_conts, border=g_border, flag=g_flag)
 
         sizer_conds_2.Add(self.new_static("奇偶比："))
         sizer_conds_2.Add(sizer_odds, border=g_border, flag=g_flag)
@@ -469,8 +501,10 @@ class DBallFrame(wx.Frame):
         sizer_conds_2.Add(self.last_odd, border=g_border, flag=g_flag)
         sizer_conds_2.Add(self.new_static("和值范围："))
         sizer_conds_2.Add(sizer_sum, border=g_border, flag=g_flag)
-        sizer_conds_2.Add(self.new_static("连号个数："))
-        sizer_conds_2.Add(sizer_conts, border=g_border, flag=g_flag)
+        sizer_conds_2.Add(self.new_static("上期结果："))
+        sizer_conds_2.Add(sizer_last_win, border=g_border, flag=g_flag)
+        sizer_conds_2.Add(self.new_static("上期重复："))
+        sizer_conds_2.Add(sizer_last_nums, border=g_border, flag=g_flag)
 
         self.SetSizer(sizer_all)
         self.Layout()
@@ -539,6 +573,9 @@ class DBallFrame(wx.Frame):
     def get_conts(self):
         return self.get_list_of_array(self.conts)
 
+    def get_last_nums(self):
+        return self.get_list_of_array(self.last_nums)
+
     def get_choice(self, item):
         value = item.GetSelection()
         if value == 0 or value == -1:
@@ -552,21 +589,6 @@ class DBallFrame(wx.Frame):
     def do_generate(self, event):
         self.clear()
 
-        #
-        # Get the values, report if there's error when parsing
-        #
-        danma = self.get_danma()
-        if len(danma) > 3:
-            self.out("错误：胆码不能超过3个")
-            return
-        nums = self.get_nums()
-        if len(danma) + len(nums) < 6:
-            self.out("错误：请选择至少%s个备选数字" % (6 - len(danma)))
-            return
-        for n in danma:
-            if n in nums:
-                self.out("错误：不可同时选择胆码和备选数字(%s)" % n)
-                return
         primes = self.get_primes()
         odds = self.get_odds()
         bigs = self.get_bigs()
@@ -583,6 +605,42 @@ class DBallFrame(wx.Frame):
         range0 = self.get_range0()
         range1 = self.get_range1()
         range2 = self.get_range2()
+        last_nums = self.get_last_nums()
+
+        # Get last win array, and how many we allow to dup
+        s = self.last_win.GetValue()
+        if not s:
+            last_win = []
+        else:
+            # non-null last win value, we will be strict
+            try:
+                s = s.replace(" ", "")
+                last_win = s.split(",")
+                if len(last_win) != 6:
+                    raise Exception()
+                last_win = map(int, last_win)
+                for i in last_win:
+                    if i > 33 or i <= 0:
+                        raise Exception()
+            except:
+                self.out("错误：无法识别上期结果")
+                return
+
+        #
+        # Get the values, report if there's error when parsing
+        #
+        danma = self.get_danma()
+        if len(danma) > 3:
+            self.out("错误：胆码不能超过3个")
+            return
+        nums = self.get_nums()
+        if len(danma) + len(nums) < 6:
+            self.out("错误：请选择至少%s个备选数字" % (6 - len(danma)))
+            return
+        for n in danma:
+            if n in nums:
+                self.out("错误：不可同时选择胆码和备选数字(%s)" % n)
+                return
 
         try:
             s = self.sum_low.GetValue()
@@ -644,6 +702,8 @@ class DBallFrame(wx.Frame):
             "range0": range0,
             "range1": range1,
             "range2": range2,
+            "last_win": last_win,
+            "last_nums": last_nums,
         }
         result = dball_calc(params)
         self.out("==缩水结果==")
