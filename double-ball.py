@@ -150,6 +150,9 @@ def dball_calc(params):
     output_set = []
 
     for array in input_set:
+        array = list(array)
+        # if there is any DanMa then sort them with the rest random ones
+        array.sort()
         if valid(prime_n) and count_prime_n(array) not in prime_n:
             continue
         if valid(big_n) and count_big_n(array) not in big_n:
