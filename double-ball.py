@@ -3,18 +3,28 @@
 
 import wx
 import math
+from datetime import datetime
 from itertools import combinations, permutations
 
 # TODO:
-# Fix using Chinese character (search FIXME)
+# - Fix using Chinese character (search FIXME)
 
+g_version = "v0.5"
+g_changelog = """
+v0.5 (2019-04-08):
+- 添加“打印”和“更新日志”按键
+- 在选择胆码后保证数列按从小到大排列
+- 窗口格局调整，输出窗口进一步变大
+- 输出从一列调整为两列
+"""
+g_title = "双色球缩水工具 - %s" % g_version
 g_debug = False
 g_prime_list = [1,2,3,5,7,11,13,17,19,23,29,31]
 g_cross_list = [1,6,8,11,15,16,21,22,26,29,31]
 g_outter_list = [1,2,3,4,5,6,7,12,13,18,19,24,25,30,31,32,33]
-g_size = (1150, 600)
+g_size = (1280, 700)
 g_lastwin_size = (250, -1)
-g_output_size = (550, 120)
+g_output_size = (700, 300)
 g_border = 3
 g_fontsize = 14
 g_flag = wx.ALL | wx.EXPAND
@@ -218,6 +228,9 @@ class DBallFrame(wx.Frame):
         self.__do_layout()
         self.__do_setfont()
 
+        self.result = []
+        self.result_str = ""
+
     def __do_setfont(self):
         for item in self.items_all:
             item.SetFont(self.font)
@@ -233,11 +246,15 @@ class DBallFrame(wx.Frame):
         self.items_all = [self.text_out, self.last_win]
 
         self.buttons = []
-        self.button_gen = wx.Button(self, wx.ID_ANY, "生成结果")
+        self.button_changelog = wx.Button(self, wx.ID_ANY, "更新日志")
+        self.buttons.append(self.button_changelog)
+        self.button_print = wx.Button(self, wx.ID_ANY, "输出结果")
+        self.buttons.append(self.button_print)
         self.button_reset = wx.Button(self, wx.ID_ANY, "重置参数")
-        self.button_quit = wx.Button(self, wx.ID_ANY, "退出")
-        self.buttons.append(self.button_gen)
         self.buttons.append(self.button_reset)
+        self.button_gen = wx.Button(self, wx.ID_ANY, "生成结果")
+        self.buttons.append(self.button_gen)
+        self.button_quit = wx.Button(self, wx.ID_ANY, "退出")
         self.buttons.append(self.button_quit)
         self.items_all += self.buttons
 
@@ -353,6 +370,24 @@ class DBallFrame(wx.Frame):
         self.Bind(wx.EVT_BUTTON, self.do_generate, self.button_gen)
         self.Bind(wx.EVT_BUTTON, self.do_reset, self.button_reset)
         self.Bind(wx.EVT_BUTTON, self.do_quit, self.button_quit)
+        self.Bind(wx.EVT_BUTTON, self.do_changelog, self.button_changelog)
+        self.Bind(wx.EVT_BUTTON, self.do_print, self.button_print)
+
+    def do_print(self, event):
+        if not self.result:
+            self.clear()
+            self.out("请先进行一次成功的缩水！")
+            return
+        date = datetime.now()
+        fname = "缩水结果-%s.txt" % date.strftime("%Y%m%d-%H%M%S")
+        output = open(unicode(fname, "utf-8"), "w")
+        output.write(self.result_str)
+        output.close()
+        self.out("缩水结果已保存到文件：'%s'" % fname)
+
+    def do_changelog(self, event):
+        self.clear()
+        self.out(g_changelog.strip())
 
     def do_reset(self, event):
         self.clear()
@@ -380,23 +415,27 @@ class DBallFrame(wx.Frame):
         sizer_all = wx.FlexGridSizer(1, 2, 5, 5)
 
         # 1st level
-        sizer_conds = wx.FlexGridSizer(14, 2, 5, 5)
+        sizer_conds = wx.FlexGridSizer(17, 2, 5, 5)
         sizer_right_all = wx.FlexGridSizer(2, 1, 5, 5)
         sizer_all.Add(sizer_conds, border=g_border, flag=g_flag)
         sizer_all.Add(sizer_right_all, border=g_border, flag=g_flag)
 
         # 2nd level
         sizer_conds_2 = wx.FlexGridSizer(10, 2, 5, 5)
-        sizer_control = wx.FlexGridSizer(2, 1, 5, 5)
+        sizer_control = wx.FlexGridSizer(3, 1, 5, 5)
         sizer_right_all.Add(sizer_conds_2, border=g_border, flag=g_flag)
         sizer_right_all.Add(sizer_control, border=g_border, flag=g_flag)
 
         # Control REGION
-        sizer_buttons = wx.GridSizer(1, 3, 5, 5)
-        for button in self.buttons:
-            sizer_buttons.Add(button, flag=g_flag, border=g_border)
         sizer_control.Add(self.text_out, border=g_border, flag=g_flag)
-        sizer_control.Add(sizer_buttons, border=g_border, flag=g_flag)
+        sizer_buttons1 = wx.GridSizer(1, 3, 5, 5)
+        sizer_buttons2 = wx.GridSizer(1, 2, 5, 5)
+        for button in self.buttons[0:3]:
+            sizer_buttons1.Add(button, flag=g_flag, border=g_border)
+        for button in self.buttons[3:5]:
+            sizer_buttons2.Add(button, flag=g_flag, border=g_border)
+        sizer_control.Add(sizer_buttons1, border=g_border, flag=g_flag)
+        sizer_control.Add(sizer_buttons2, border=g_border, flag=g_flag)
 
         # Conditions REGION
         sizer_numbers_in = wx.GridSizer(6, 6, 3, 3)
@@ -499,12 +538,12 @@ class DBallFrame(wx.Frame):
         sizer_conds.Add(self.new_static("不同尾数："))
         sizer_conds.Add(sizer_diff_tails, border=g_border, flag=g_flag)
 
-        sizer_conds_2.Add(self.new_static("奇偶比："))
-        sizer_conds_2.Add(sizer_odds, border=g_border, flag=g_flag)
-        sizer_conds_2.Add(self.new_static("首位奇偶："))
-        sizer_conds_2.Add(self.first_odd, border=g_border, flag=g_flag)
-        sizer_conds_2.Add(self.new_static("末位奇偶："))
-        sizer_conds_2.Add(self.last_odd, border=g_border, flag=g_flag)
+        sizer_conds.Add(self.new_static("奇偶比："))
+        sizer_conds.Add(sizer_odds, border=g_border, flag=g_flag)
+        sizer_conds.Add(self.new_static("首位奇偶："))
+        sizer_conds.Add(self.first_odd, border=g_border, flag=g_flag)
+        sizer_conds.Add(self.new_static("末位奇偶："))
+        sizer_conds.Add(self.last_odd, border=g_border, flag=g_flag)
         sizer_conds_2.Add(self.new_static("和值范围："))
         sizer_conds_2.Add(sizer_sum, border=g_border, flag=g_flag)
         sizer_conds_2.Add(self.new_static("上期结果："))
@@ -515,8 +554,10 @@ class DBallFrame(wx.Frame):
         self.SetSizer(sizer_all)
         self.Layout()
 
-    def out(self, line):
-        self.text_out.AppendText(unicode(line + "\n", "utf-8"))
+    def out(self, line, ret=True):
+        if ret:
+            line += "\n"
+        self.text_out.AppendText(unicode(line, "utf-8"))
 
     def clear(self):
         self.text_out.SetValue("")
@@ -721,15 +762,23 @@ class DBallFrame(wx.Frame):
             "last_win": last_win,
             "last_nums": last_nums,
         }
-        result = dball_calc(params)
+        self.result = result = dball_calc(params)
         self.out("==缩水结果==")
         if not result:
+            self.result_str = ""
             self.out("未找到合适的结果，请修改缩水范围后重试。")
         else:
             start = 1
+            result_str = "" 
             for entry in result:
-                self.out("%03d: %s" % (start, entry))
+                result_str += "%d: %s" % (start, entry)
+                if start % 2:
+                    result_str += " "
+                else:
+                    result_str += "\n"
                 start += 1
+            self.result_str = result_str
+            self.out(result_str)
 
     def do_quit(self, event):
         print("Quitting...")
@@ -747,7 +796,7 @@ class MyApp(wx.App):
     def OnInit(self):
         frame_main = DBallFrame(None,
                                 wx.ID_ANY,
-                                title="双色球缩水工具",
+                                title=g_title,
                                 style=g_style)
         self.SetTopWindow(frame_main)
         frame_main.Show()
