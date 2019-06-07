@@ -9,13 +9,20 @@ from itertools import combinations, permutations
 # TODO:
 # - Fix using Chinese character (search FIXME)
 
-g_version = "v0.5"
+g_version = "v0.6"
 g_changelog = """
 v0.5 (2019-04-08):
 - 添加“打印”和“更新日志”按键
 - 在选择胆码后保证数列按从小到大排列
 - 窗口格局调整，输出窗口进一步变大
 - 输出从一列调整为两列
+
+v0.6 (2019-06-06):
+- 将“首位奇偶”和“末尾奇偶”放到一行
+- 胆码选择由选择改为输入数字
+- 缩水结果显示修改：三列，每一列留有空隙，每五行留一空行，结果显示为[1] 01 02 03 ...
+- 所有其他相关数字选择也用两位显示，如01，02，...
+- 增加除4余0，1，2，3的选项
 """
 g_title = "双色球缩水工具 - %s" % g_version
 g_debug = False
@@ -24,7 +31,7 @@ g_cross_list = [1,6,8,11,15,16,21,22,26,29,31]
 g_outter_list = [1,2,3,4,5,6,7,12,13,18,19,24,25,30,31,32,33]
 g_size = (1280, 700)
 g_lastwin_size = (250, -1)
-g_output_size = (700, 300)
+g_output_size = (800, 300)
 g_border = 3
 g_fontsize = 14
 g_flag = wx.ALL | wx.EXPAND
@@ -108,6 +115,13 @@ def count_three(n_list, rest):
             cnt += 1
     return cnt
 
+def count_four(n_list, rest):
+    cnt = 0
+    for i in n_list:
+        if i % 4 == rest:
+            cnt += 1
+    return cnt
+
 def get_range(n):
     if n <= 11:
         return 0
@@ -149,6 +163,10 @@ def dball_calc(params):
     three0 = params["three0"]
     three1 = params["three1"]
     three2 = params["three2"]
+    four0 = params["four0"]
+    four1 = params["four1"]
+    four2 = params["four2"]
+    four3 = params["four3"]
     range0 = params["range0"]
     range1 = params["range1"]
     range2 = params["range2"]
@@ -179,12 +197,23 @@ def dball_calc(params):
             continue
         if valid(cont_n) and count_cont_n(array) not in cont_n:
             continue
+
         if valid(three0) and count_three(array, 0) not in three0:
             continue
         if valid(three1) and count_three(array, 1) not in three1:
             continue
         if valid(three2) and count_three(array, 2) not in three2:
             continue
+
+        if valid(four0) and count_four(array, 0) not in four0:
+            continue
+        if valid(four1) and count_four(array, 1) not in four1:
+            continue
+        if valid(four2) and count_four(array, 2) not in four2:
+            continue
+        if valid(four3) and count_four(array, 3) not in four3:
+            continue
+
         if valid(range0) and count_range(array, 0) not in range0:
             continue
         if valid(range1) and count_range(array, 1) not in range1:
@@ -234,15 +263,17 @@ class DBallFrame(wx.Frame):
     def __do_setfont(self):
         for item in self.items_all:
             item.SetFont(self.font)
+        self.text_out.SetFont(self.font_small)
 
     def __create_objects(self):
         # Including bindings of the objects (mostly, buttons)
         self.font = wx.Font(wx.FontInfo(g_fontsize).Bold())
+        self.font_small = wx.Font(wx.FontInfo(g_fontsize - 2).Bold())
 
         self.text_out = wx.TextCtrl(self, wx.ID_ANY, "", size=g_output_size,
                                     style=wx.TE_MULTILINE | wx.TE_READONLY)
         self.last_win = wx.TextCtrl(self, wx.ID_ANY, "", size=g_lastwin_size)
-
+        self.danma = wx.TextCtrl(self, wx.ID_ANY, "", size=g_lastwin_size)
         self.items_all = [self.text_out, self.last_win]
 
         self.buttons = []
@@ -270,14 +301,18 @@ class DBallFrame(wx.Frame):
         self.checkboxes = []
 
         self.numbers = []
-        self.danma = []
+        #self.danma = []
         for i in range(1, 34):
-            box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
+            box = wx.CheckBox(self, wx.ID_ANY, "%02d" % i)
             self.numbers.append(box)
-            box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
-            self.danma.append(box)
+            #box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
+            #self.danma.append(box)
         self.checkboxes += self.numbers
-        self.checkboxes += self.danma
+        #self.checkboxes += self.danma
+
+        if g_debug:
+            for i in range(1, 10):
+                self.numbers[i-1].SetValue(True)
 
         self.primes = []
         for i in range(0, 7):
@@ -321,6 +356,7 @@ class DBallFrame(wx.Frame):
             self.outters.append(box)
         self.checkboxes += self.outters
 
+        # divide 3
         self.three0 = []
         for i in range(0, 7):
             box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
@@ -336,6 +372,28 @@ class DBallFrame(wx.Frame):
             box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
             self.three2.append(box)
         self.checkboxes += self.three2
+
+        # divide 4
+        self.four0 = []
+        for i in range(0, 7):
+            box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
+            self.four0.append(box)
+        self.checkboxes += self.four0
+        self.four1 = []
+        for i in range(0, 7):
+            box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
+            self.four1.append(box)
+        self.checkboxes += self.four1
+        self.four2 = []
+        for i in range(0, 7):
+            box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
+            self.four2.append(box)
+        self.checkboxes += self.four2
+        self.four3 = []
+        for i in range(0, 7):
+            box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
+            self.four3.append(box)
+        self.checkboxes += self.four3
 
         self.range0 = []
         for i in range(0, 7):
@@ -415,13 +473,13 @@ class DBallFrame(wx.Frame):
         sizer_all = wx.FlexGridSizer(1, 2, 5, 5)
 
         # 1st level
-        sizer_conds = wx.FlexGridSizer(17, 2, 5, 5)
+        sizer_conds = wx.FlexGridSizer(19, 2, 5, 5)
         sizer_right_all = wx.FlexGridSizer(2, 1, 5, 5)
         sizer_all.Add(sizer_conds, border=g_border, flag=g_flag)
         sizer_all.Add(sizer_right_all, border=g_border, flag=g_flag)
 
         # 2nd level
-        sizer_conds_2 = wx.FlexGridSizer(10, 2, 5, 5)
+        sizer_conds_2 = wx.FlexGridSizer(12, 2, 5, 5)
         sizer_control = wx.FlexGridSizer(3, 1, 5, 5)
         sizer_right_all.Add(sizer_conds_2, border=g_border, flag=g_flag)
         sizer_right_all.Add(sizer_control, border=g_border, flag=g_flag)
@@ -441,9 +499,7 @@ class DBallFrame(wx.Frame):
         sizer_numbers_in = wx.GridSizer(6, 6, 3, 3)
         for num in self.numbers:
             sizer_numbers_in.Add(num, border=0, flag=g_flag)
-        sizer_danma_in = wx.GridSizer(6, 6, 3, 3)
-        for num in self.danma:
-            sizer_danma_in.Add(num, border=0, flag=g_flag)
+
         sizer_primes = wx.GridSizer(1, 7, 3, 3)
         for prime in self.primes:
             sizer_primes.Add(prime, border=0, flag=g_flag)
@@ -487,6 +543,19 @@ class DBallFrame(wx.Frame):
         for item in self.three2:
             sizer_three2.Add(item, border=0, flag=g_flag)
 
+        sizer_four0 = wx.GridSizer(1, 7, 3, 3)
+        for item in self.four0:
+            sizer_four0.Add(item, border=0, flag=g_flag)
+        sizer_four1 = wx.GridSizer(1, 7, 3, 3)
+        for item in self.four1:
+            sizer_four1.Add(item, border=0, flag=g_flag)
+        sizer_four2 = wx.GridSizer(1, 7, 3, 3)
+        for item in self.four2:
+            sizer_four2.Add(item, border=0, flag=g_flag)
+        sizer_four3 = wx.GridSizer(1, 7, 3, 3)
+        for item in self.four3:
+            sizer_four3.Add(item, border=0, flag=g_flag)
+
         sizer_range0 = wx.GridSizer(1, 7, 3, 3)
         for item in self.range0:
             sizer_range0.Add(item, border=0, flag=g_flag)
@@ -500,12 +569,21 @@ class DBallFrame(wx.Frame):
         sizer_conts = wx.GridSizer(1, 6, 3, 3)
         for cont in self.conts:
             sizer_conts.Add(cont, border=0, flag=g_flag)
+
         sizer_last_win = wx.FlexGridSizer(1, 2, 3, 3)
         sizer_last_win.Add(self.last_win, border=0, flag=g_flag)
-        sizer_last_win.Add(self.new_static("(例:1,2,3,4,5,6)"))
+        sizer_last_win.Add(self.new_static("(例:01 02 03 04 05 06)"))
         sizer_last_nums = wx.GridSizer(1, 5, 3, 3)
         for item in self.last_nums:
             sizer_last_nums.Add(item, border=0, flag=g_flag)
+
+        #sizer_danma_in = wx.GridSizer(6, 6, 3, 3)
+        #for num in self.danma:
+        #    sizer_danma_in.Add(num, border=0, flag=g_flag)
+
+        sizer_danma_in = wx.FlexGridSizer(1, 2, 3, 3)
+        sizer_danma_in.Add(self.danma, border=0, flag=g_flag)
+        sizer_danma_in.Add(self.new_static("(例:01 02 03)"))
 
         sizer_conds.Add(self.new_static("数字选择："))
         sizer_conds.Add(sizer_numbers_in, border=0, flag=g_flag)
@@ -527,6 +605,14 @@ class DBallFrame(wx.Frame):
         sizer_conds.Add(sizer_three1, border=g_border, flag=g_flag)
         sizer_conds.Add(self.new_static("除3余2："))
         sizer_conds.Add(sizer_three2, border=g_border, flag=g_flag)
+        sizer_conds.Add(self.new_static("除4余0："))
+        sizer_conds.Add(sizer_four0, border=g_border, flag=g_flag)
+        sizer_conds.Add(self.new_static("除4余1："))
+        sizer_conds.Add(sizer_four1, border=g_border, flag=g_flag)
+        sizer_conds.Add(self.new_static("除4余2："))
+        sizer_conds.Add(sizer_four2, border=g_border, flag=g_flag)
+        sizer_conds.Add(self.new_static("除4余3："))
+        sizer_conds.Add(sizer_four3, border=g_border, flag=g_flag)
         sizer_conds.Add(self.new_static("第一区间："))
         sizer_conds.Add(sizer_range0, border=g_border, flag=g_flag)
         sizer_conds.Add(self.new_static("第二区间："))
@@ -535,15 +621,23 @@ class DBallFrame(wx.Frame):
         sizer_conds.Add(sizer_range2, border=g_border, flag=g_flag)
         sizer_conds.Add(self.new_static("连号个数："))
         sizer_conds.Add(sizer_conts, border=g_border, flag=g_flag)
-        sizer_conds.Add(self.new_static("不同尾数："))
-        sizer_conds.Add(sizer_diff_tails, border=g_border, flag=g_flag)
 
-        sizer_conds.Add(self.new_static("奇偶比："))
-        sizer_conds.Add(sizer_odds, border=g_border, flag=g_flag)
-        sizer_conds.Add(self.new_static("首位奇偶："))
-        sizer_conds.Add(self.first_odd, border=g_border, flag=g_flag)
-        sizer_conds.Add(self.new_static("末位奇偶："))
-        sizer_conds.Add(self.last_odd, border=g_border, flag=g_flag)
+        sizer_conds_2.Add(self.new_static("首位奇偶："))
+        #sizer_conds.Add(self.first_odd, border=g_border, flag=g_flag)
+        #sizer_conds.Add(self.new_static("末位奇偶："))
+        #sizer_conds.Add(self.last_odd, border=g_border, flag=g_flag)
+        sizer_shoumojiou = wx.FlexGridSizer(1, 4, 0, 0)
+        sizer_shoumojiou.Add(self.new_static("     "), border=0, flag=g_flag)
+        sizer_shoumojiou.Add(self.first_odd, border=0, flag=g_flag)
+        sizer_shoumojiou.Add(self.new_static("    末位奇偶：    "), border=0, flag=g_flag)
+        sizer_shoumojiou.Add(self.last_odd, border=0, flag=g_flag)                             
+        sizer_conds_2.Add(sizer_shoumojiou, border=0, flag=g_flag)
+
+        sizer_conds_2.Add(self.new_static("不同尾数："))
+        sizer_conds_2.Add(sizer_diff_tails, border=g_border, flag=g_flag)
+        sizer_conds_2.Add(self.new_static("奇偶比："))
+        sizer_conds_2.Add(sizer_odds, border=g_border, flag=g_flag)
+
         sizer_conds_2.Add(self.new_static("和值范围："))
         sizer_conds_2.Add(sizer_sum, border=g_border, flag=g_flag)
         sizer_conds_2.Add(self.new_static("上期结果："))
@@ -576,16 +670,23 @@ class DBallFrame(wx.Frame):
         return self.get_list_of_array(self.numbers, 1)
 
     def get_danma(self):
-        return self.get_list_of_array(self.danma, 1)
+        return self.get_num_list(self.danma)
 
     def get_three0(self):
         return self.get_list_of_array(self.three0)
-
     def get_three1(self):
         return self.get_list_of_array(self.three1)
-
     def get_three2(self):
         return self.get_list_of_array(self.three2)
+
+    def get_four0(self):
+        return self.get_list_of_array(self.four0)
+    def get_four1(self):
+        return self.get_list_of_array(self.four1)
+    def get_four2(self):
+        return self.get_list_of_array(self.four2)
+    def get_four3(self):
+        return self.get_list_of_array(self.four3)
 
     def get_range0(self):
         return self.get_list_of_array(self.range0)
@@ -633,31 +734,11 @@ class DBallFrame(wx.Frame):
             return 0
         raise Exception("Unknown value: %s" % value)
 
-    def do_generate(self, event):
-        self.clear()
-
-        primes = self.get_primes()
-        odds = self.get_odds()
-        bigs = self.get_bigs()
-        acs = self.get_acs()
-        diff_tails = self.get_diff_tails()
-        crosses = self.get_crosses()
-        outters = self.get_outters()
-        first_odd = self.get_choice(self.first_odd)
-        last_odd = self.get_choice(self.last_odd)
-        conts = self.get_conts()
-        three0 = self.get_three0()
-        three1 = self.get_three1()
-        three2 = self.get_three2()
-        range0 = self.get_range0()
-        range1 = self.get_range1()
-        range2 = self.get_range2()
-        last_nums = self.get_last_nums()
-
-        # Get last win array, and how many we allow to dup
-        s = self.last_win.GetValue()
+    def get_num_list(self, item):
+        """Item must be a textbox"""
+        s = item.GetValue()
         if not s:
-            last_win = []
+            result = []
         else:
             # non-null last win value, we will be strict
             try:
@@ -672,21 +753,59 @@ class DBallFrame(wx.Frame):
                 s = s.replace("，".decode("utf-8"), " ")
                 s = s.replace("、".decode("utf-8"), " ")
                 s = s.replace("。".decode("utf-8"), " ")
-                last_win = s.split()
-                if len(set(last_win)) != 6:
-                    raise Exception()
-                last_win = map(int, last_win)
-                for i in last_win:
+                result = s.split()
+                result = map(int, result)
+                # sanity check
+                for i in result:
                     if i > 33 or i <= 0:
                         raise Exception()
             except:
-                self.out("错误：无法识别上期结果")
-                return
+                result = -1
+        return result
+
+    def do_generate(self, event):
+        self.clear()
+
+        primes = self.get_primes()
+        odds = self.get_odds()
+        bigs = self.get_bigs()
+        acs = self.get_acs()
+        diff_tails = self.get_diff_tails()
+        crosses = self.get_crosses()
+        outters = self.get_outters()
+        first_odd = self.get_choice(self.first_odd)
+        last_odd = self.get_choice(self.last_odd)
+        conts = self.get_conts()
+        
+        three0 = self.get_three0()
+        three1 = self.get_three1()
+        three2 = self.get_three2()
+        
+        four0 = self.get_four0()
+        four1 = self.get_four1()
+        four2 = self.get_four2()
+        four3 = self.get_four3()
+        
+        range0 = self.get_range0()
+        range1 = self.get_range1()
+        range2 = self.get_range2()
+        last_nums = self.get_last_nums()
+
+        last_win = self.get_num_list(self.last_win)
+        if type(last_win) != type([]):
+            self.out("错误：上期结果解析错误，请重新输入")
+            return
+        if last_win and len(last_win) != 6:
+            self.out("错误：上期结果必须是6个数字")
+            return
 
         #
         # Get the values, report if there's error when parsing
         #
         danma = self.get_danma()
+        if type(danma) != type([]):
+            self.out("错误：胆码无法识别，请重新输入")
+            return
         if len(danma) > 3:
             self.out("错误：胆码不能超过3个")
             return
@@ -722,22 +841,6 @@ class DBallFrame(wx.Frame):
             self.out("错误：和值最小值大于最大值，请重新输入")
             return
 
-        if g_debug:
-            self.out("==缩水条件==")
-            self.out("所选数字: %s" % nums)
-            self.out("质数个数: %s" % (primes if primes else "<任意>"))
-            self.out("奇数个数: %s" % (odds if odds else "<任意>"))
-            self.out("大数个数: %s" % (bigs if bigs else "<任意>"))
-            self.out("可选AC数值: %s" % (acs if acs else "<任意>"))
-            self.out("不同尾数个数: %s" % (diff_tails if diff_tails else "<任意>"))
-            self.out("对角线个数: %s" % (crosses if crosses else "<任意>"))
-            self.out("外围个数: %s" % (outters if outters else "<任意>"))
-            self.out("首位奇数: %s" % (first_odd if first_odd != -1 else "<任意>"))
-            self.out("末位奇数: %s" % (last_odd if last_odd != -1 else "<任意>"))
-            self.out("和值范围：%s - %s" %
-                     (sum_low if sum_low is not -1 else "<任意>",
-                      sum_high if sum_high is not -1 else "<任意>"))
-            self.out("连号个数: %s" % (conts if conts else "<任意>"))
         params = {
             "danma_list": danma,
             "num_list": nums,
@@ -756,14 +859,22 @@ class DBallFrame(wx.Frame):
             "three0": three0,
             "three1": three1,
             "three2": three2,
+            "four0": four0,
+            "four1": four1,
+            "four2": four2,
+            "four3": four3,
             "range0": range0,
             "range1": range1,
             "range2": range2,
             "last_win": last_win,
             "last_nums": last_nums,
         }
-        self.result = result = dball_calc(params)
-        self.out("==缩水结果==")
+        self.result = dball_calc(params)
+        self.do_show_result(self.result)
+
+    def do_show_result(self, result):
+        full_line = "-----------------------------------------------------------------------"
+        self.out("缩水结果：\n%s" % full_line)
         if not result:
             self.result_str = ""
             self.out("未找到合适的结果，请修改缩水范围后重试。")
@@ -771,11 +882,14 @@ class DBallFrame(wx.Frame):
             start = 1
             result_str = "" 
             for entry in result:
-                result_str += "%d: %s" % (start, entry)
-                if start % 2:
+                str_res = " ".join(map(lambda x: "%02d" % x, entry))
+                result_str += "[%03s] %s" % (start, str_res)
+                if start % 3:
                     result_str += " "
                 else:
                     result_str += "\n"
+                if start % 15 == 0:
+                    result_str += full_line + "\n"
                 start += 1
             self.result_str = result_str
             self.out(result_str)
