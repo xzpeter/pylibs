@@ -3,13 +3,14 @@
 
 import wx
 import math
+import sys
 from datetime import datetime
 from itertools import combinations, permutations
 
 # TODO:
 # - Fix using Chinese character (search FIXME)
 
-g_version = "v0.6"
+g_version = "v0.7"
 g_changelog = """
 v0.5 (2019-04-08):
 - 添加“打印”和“更新日志”按键
@@ -23,6 +24,10 @@ v0.6 (2019-06-06):
 - 缩水结果显示修改：三列，每一列留有空隙，每五行留一空行，结果显示为[1] 01 02 03 ...
 - 所有其他相关数字选择也用两位显示，如01，02，...
 - 增加除4余0，1，2，3的选项
+
+v0.7 (2019-12-14):
+- 删除“和值范围”, “AC值”
+- 允许缩水结果为6，8或者10个数字
 """
 g_title = "双色球缩水工具 - %s" % g_version
 g_debug = False
@@ -33,12 +38,26 @@ g_size = (1280, 700)
 g_lastwin_size = (250, -1)
 g_output_size = (800, 300)
 g_border = 3
+g_border2 = 3
 g_fontsize = 14
 g_flag = wx.ALL | wx.EXPAND
+g_elements = 8
 
 # uncomment this to disable window resizing
 # g_style = wx.DEFAULT_FRAME_STYLE & ~(wx.RESIZE_BORDER | wx.MAXIMIZE_BOX)
 g_style = wx.DEFAULT_FRAME_STYLE
+
+if sys.platform.startswith("linux"):
+    g_os_windows = False
+else:
+    g_os_windows = True
+
+if len(sys.argv) > 1:
+    arg1 = sys.argv[1]
+    if arg1.isdigit():
+        val = int(arg1)
+        if val in [6, 8, 10]:
+            g_elements = val
 
 def valid(n):
     return n != -1 and n != []
@@ -173,7 +192,7 @@ def dball_calc(params):
     last_win = params["last_win"]
     last_nums = params["last_nums"]
 
-    rand_set = combinations(num_list, 6 - len(danma_list))
+    rand_set = combinations(num_list, g_elements - len(danma_list))
     input_set = map(lambda x: x + tuple(danma_list), rand_set)
     output_set = []
 
@@ -261,14 +280,16 @@ class DBallFrame(wx.Frame):
         self.result_str = ""
 
     def __do_setfont(self):
-        for item in self.items_all:
-            item.SetFont(self.font)
-        self.text_out.SetFont(self.font_small)
+        if g_os_windows:
+            for item in self.items_all:
+                item.SetFont(self.font)
+            self.text_out.SetFont(self.font_small)
 
     def __create_objects(self):
         # Including bindings of the objects (mostly, buttons)
-        self.font = wx.Font(wx.FontInfo(g_fontsize).Bold())
-        self.font_small = wx.Font(wx.FontInfo(g_fontsize - 2).Bold())
+        if g_os_windows:
+            self.font = wx.Font(wx.FontInfo(g_fontsize).Bold())
+            self.font_small = wx.Font(wx.FontInfo(g_fontsize - 2).Bold())
 
         self.text_out = wx.TextCtrl(self, wx.ID_ANY, "", size=g_output_size,
                                     style=wx.TE_MULTILINE | wx.TE_READONLY)
@@ -289,14 +310,14 @@ class DBallFrame(wx.Frame):
         self.buttons.append(self.button_quit)
         self.items_all += self.buttons
 
-        self.sum_low = wx.TextCtrl(self, wx.ID_ANY, "")
-        self.sum_high = wx.TextCtrl(self, wx.ID_ANY, "")
+        # self.sum_low = wx.TextCtrl(self, wx.ID_ANY, "")
+        # self.sum_high = wx.TextCtrl(self, wx.ID_ANY, "")
         self.first_odd = wx.Choice(self, wx.ID_ANY,
                                    choices=["任意", "奇数", "偶数"])
         self.last_odd = wx.Choice(self, wx.ID_ANY,
                                   choices=["任意", "奇数", "偶数"])
-        self.items_all += [self.sum_low, self.sum_high]
-        self.items_all += [self.first_odd, self.last_odd]
+        # self.items_all += [self.sum_low, self.sum_high]
+        # self.items_all += [self.first_odd, self.last_odd]
 
         self.checkboxes = []
 
@@ -315,104 +336,106 @@ class DBallFrame(wx.Frame):
                 self.numbers[i-1].SetValue(True)
 
         self.primes = []
-        for i in range(0, 7):
-            box = wx.CheckBox(self, wx.ID_ANY, "%s:%s" % (i, 6-i))
+        for i in range(0, g_elements + 1):
+            box = wx.CheckBox(self, wx.ID_ANY, "%s:%s" %
+                              (i, g_elements-i))
             self.primes.append(box)
         self.checkboxes += self.primes
 
         self.odds = []
-        for i in range(0, 7):
-            box = wx.CheckBox(self, wx.ID_ANY, "%s:%s" % (i, 6-i))
+        for i in range(0, g_elements + 1):
+            box = wx.CheckBox(self, wx.ID_ANY, "%s:%s" %
+                              (i, g_elements-i))
             self.odds.append(box)
         self.checkboxes += self.odds
 
         self.bigs = []
-        for i in range(0, 7):
-            box = wx.CheckBox(self, wx.ID_ANY, "%s:%s" % (i, 6-i))
+        for i in range(0, g_elements + 1):
+            box = wx.CheckBox(self, wx.ID_ANY, "%s:%s" % (i, g_elements-i))
             self.bigs.append(box)
         self.checkboxes += self.bigs
 
-        self.acs = []
-        for i in range(1, 11):
-            box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
-            self.acs.append(box)
-        self.checkboxes += self.acs
+        # self.acs = []
+        # for i in range(1, 11):
+        #     box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
+        #     self.acs.append(box)
+        # self.checkboxes += self.acs
 
         self.diff_tails = []
-        for i in range(3, 7):
+        for i in range(3, g_elements + 1):
             box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
             self.diff_tails.append(box)
         self.checkboxes += self.diff_tails
 
         self.crosses = []
-        for i in range(0, 7):
+        for i in range(0, g_elements + 1):
             box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
             self.crosses.append(box)
         self.checkboxes += self.crosses
 
         self.outters = []
-        for i in range(0, 7):
+        for i in range(0, g_elements + 1):
             box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
             self.outters.append(box)
         self.checkboxes += self.outters
 
         # divide 3
         self.three0 = []
-        for i in range(0, 7):
+        for i in range(0, g_elements + 1):
             box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
             self.three0.append(box)
         self.checkboxes += self.three0
         self.three1 = []
-        for i in range(0, 7):
+        for i in range(0, g_elements + 1):
             box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
             self.three1.append(box)
         self.checkboxes += self.three1
         self.three2 = []
-        for i in range(0, 7):
+        for i in range(0, g_elements + 1):
             box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
             self.three2.append(box)
         self.checkboxes += self.three2
 
         # divide 4
         self.four0 = []
-        for i in range(0, 7):
+        for i in range(0, g_elements + 1):
             box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
             self.four0.append(box)
         self.checkboxes += self.four0
         self.four1 = []
-        for i in range(0, 7):
+        for i in range(0, g_elements + 1):
             box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
             self.four1.append(box)
         self.checkboxes += self.four1
         self.four2 = []
-        for i in range(0, 7):
+        for i in range(0, g_elements + 1):
             box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
             self.four2.append(box)
         self.checkboxes += self.four2
         self.four3 = []
-        for i in range(0, 7):
+        for i in range(0, g_elements + 1):
             box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
             self.four3.append(box)
         self.checkboxes += self.four3
 
         self.range0 = []
-        for i in range(0, 7):
+        for i in range(0, g_elements + 1):
             box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
             self.range0.append(box)
         self.checkboxes += self.range0
         self.range1 = []
-        for i in range(0, 7):
+        for i in range(0, g_elements + 1):
             box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
             self.range1.append(box)
         self.checkboxes += self.range1
         self.range2 = []
-        for i in range(0, 7):
+        for i in range(0, g_elements + 1):
             box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
             self.range2.append(box)
         self.checkboxes += self.range2
 
         self.conts = []
-        for i in range(0, 6):
+        for i in range(0, g_elements):
             box = wx.CheckBox(self, wx.ID_ANY, "%s" % i)
             self.conts.append(box)
         self.checkboxes += self.conts
@@ -451,8 +474,8 @@ class DBallFrame(wx.Frame):
         self.clear()
         for box in self.checkboxes:
             box.SetValue(False)
-        self.sum_low.SetValue("")
-        self.sum_high.SetValue("")
+        # self.sum_low.SetValue("")
+        # self.sum_high.SetValue("")
         self.first_odd.SetSelection(-1)
         self.last_odd.SetSelection(-1)
         self.last_win.SetValue("")
@@ -496,83 +519,86 @@ class DBallFrame(wx.Frame):
         sizer_control.Add(sizer_buttons2, border=g_border, flag=g_flag)
 
         # Conditions REGION
-        sizer_numbers_in = wx.GridSizer(6, 6, 3, 3)
+        sizer_numbers_in = wx.GridSizer(6, 6, g_border2, g_border2)
         for num in self.numbers:
             sizer_numbers_in.Add(num, border=0, flag=g_flag)
 
-        sizer_primes = wx.GridSizer(1, 7, 3, 3)
+        sizer_primes = wx.GridSizer(1, g_elements + 1, g_border2, g_border2)
         for prime in self.primes:
             sizer_primes.Add(prime, border=0, flag=g_flag)
-        sizer_odds = wx.GridSizer(1, 7, 3, 3)
+        sizer_odds = wx.GridSizer(1, g_elements + 1, g_border2, g_border2)
         for odd in self.odds:
             sizer_odds.Add(odd, border=0, flag=g_flag)
-        sizer_bigs = wx.GridSizer(1, 7, 3, 3)
+        sizer_bigs = wx.GridSizer(1, g_elements + 1, g_border2, g_border2)
         for big in self.bigs:
             sizer_bigs.Add(big, border=0, flag=g_flag)
-        sizer_acs = wx.GridSizer(2, 5, 3, 3)
-        for ac in self.acs:
-            sizer_acs.Add(ac, border=0, flag=g_flag)
-        sizer_diff_tails = wx.GridSizer(1, 10, 3, 3)
+        sizer_acs = wx.GridSizer(2, 5, g_border2, g_border2)
+        # for ac in self.acs:
+        #     sizer_acs.Add(ac, border=0, flag=g_flag)
+        sizer_diff_tails = wx.GridSizer(1, 15, g_border2, g_border2)
         sizer_diff_tails.Add(wx.StaticText(self, wx.ID_ANY, ""))
         sizer_diff_tails.Add(wx.StaticText(self, wx.ID_ANY, ""))
         sizer_diff_tails.Add(wx.StaticText(self, wx.ID_ANY, ""))
         for tail in self.diff_tails:
             sizer_diff_tails.Add(tail, border=0, flag=g_flag)
-        sizer_crosses = wx.GridSizer(1, 7, 3, 3)
+        sizer_crosses = wx.GridSizer(1, g_elements + 1, g_border2, g_border2)
         for cross in self.crosses:
             sizer_crosses.Add(cross, border=0, flag=g_flag)
-        sizer_outters = wx.GridSizer(1, 7, 3, 3)
+        sizer_outters = wx.GridSizer(1, g_elements + 1, g_border2, g_border2)
         for outter in self.outters:
             sizer_outters.Add(outter, border=0, flag=g_flag)
-        sizer_bigs = wx.GridSizer(1, 7, 3, 3)
+        sizer_bigs = wx.GridSizer(1, g_elements + 1, g_border2, g_border2)
         for big in self.bigs:
             sizer_bigs.Add(big, border=0, flag=g_flag)
-        sizer_sum = wx.FlexGridSizer(1, 4, 3, 3)
-        sizer_sum.Add(self.new_static("        从"), border=0)
-        sizer_sum.Add(self.sum_low, border=0)
-        sizer_sum.Add(self.new_static("到"), border=0)
-        sizer_sum.Add(self.sum_high, border=0)
+        # sizer_sum = wx.FlexGridSizer(1, 4, g_border2, g_border2)
+        # sizer_sum.Add(self.new_static("        从"), border=0)
+        # sizer_sum.Add(self.sum_low, border=0)
+        # sizer_sum.Add(self.new_static("到"), border=0)
+        # sizer_sum.Add(self.sum_high, border=0)
 
-        sizer_three0 = wx.GridSizer(1, 7, 3, 3)
+        sizer_three0 = wx.GridSizer(1, g_elements + 1, g_border2, g_border2)
         for item in self.three0:
             sizer_three0.Add(item, border=0, flag=g_flag)
-        sizer_three1 = wx.GridSizer(1, 7, 3, 3)
+        sizer_three1 = wx.GridSizer(1, g_elements + 1, g_border2, g_border2)
         for item in self.three1:
             sizer_three1.Add(item, border=0, flag=g_flag)
-        sizer_three2 = wx.GridSizer(1, 7, 3, 3)
+        sizer_three2 = wx.GridSizer(1, g_elements + 1, g_border2, g_border2)
         for item in self.three2:
             sizer_three2.Add(item, border=0, flag=g_flag)
 
-        sizer_four0 = wx.GridSizer(1, 7, 3, 3)
+        sizer_four0 = wx.GridSizer(1, g_elements + 1, g_border2, g_border2)
         for item in self.four0:
             sizer_four0.Add(item, border=0, flag=g_flag)
-        sizer_four1 = wx.GridSizer(1, 7, 3, 3)
+        sizer_four1 = wx.GridSizer(1, g_elements + 1, g_border2, g_border2)
         for item in self.four1:
             sizer_four1.Add(item, border=0, flag=g_flag)
-        sizer_four2 = wx.GridSizer(1, 7, 3, 3)
+        sizer_four2 = wx.GridSizer(1, g_elements + 1, g_border2, g_border2)
         for item in self.four2:
             sizer_four2.Add(item, border=0, flag=g_flag)
-        sizer_four3 = wx.GridSizer(1, 7, 3, 3)
+        sizer_four3 = wx.GridSizer(1, g_elements + 1, g_border2, g_border2)
         for item in self.four3:
             sizer_four3.Add(item, border=0, flag=g_flag)
 
-        sizer_range0 = wx.GridSizer(1, 7, 3, 3)
+        sizer_range0 = wx.GridSizer(1, g_elements + 1, g_border2, g_border2)
         for item in self.range0:
             sizer_range0.Add(item, border=0, flag=g_flag)
-        sizer_range1 = wx.GridSizer(1, 7, 3, 3)
+        sizer_range1 = wx.GridSizer(1, g_elements + 1, g_border2, g_border2)
         for item in self.range1:
             sizer_range1.Add(item, border=0, flag=g_flag)
-        sizer_range2 = wx.GridSizer(1, 7, 3, 3)
+        sizer_range2 = wx.GridSizer(1, g_elements + 1, g_border2, g_border2)
         for item in self.range2:
             sizer_range2.Add(item, border=0, flag=g_flag)
 
-        sizer_conts = wx.GridSizer(1, 6, 3, 3)
+        sizer_conts = wx.GridSizer(1, g_elements, g_border2, g_border2)
         for cont in self.conts:
             sizer_conts.Add(cont, border=0, flag=g_flag)
 
-        sizer_last_win = wx.FlexGridSizer(1, 2, 3, 3)
+        sizer_last_win = wx.FlexGridSizer(1, 2, g_border2, g_border2)
         sizer_last_win.Add(self.last_win, border=0, flag=g_flag)
-        sizer_last_win.Add(self.new_static("(例:01 02 03 04 05 06)"))
+        s = ""
+        for i in range(g_elements):
+            s += "%02d " % (i + 1)
+        sizer_last_win.Add(self.new_static("(例:%s)" % s))
         sizer_last_nums = wx.GridSizer(1, 5, 3, 3)
         for item in self.last_nums:
             sizer_last_nums.Add(item, border=0, flag=g_flag)
@@ -593,8 +619,8 @@ class DBallFrame(wx.Frame):
         sizer_conds.Add(sizer_primes, border=g_border, flag=g_flag)
         sizer_conds.Add(self.new_static("大小比："))
         sizer_conds.Add(sizer_bigs, border=g_border, flag=g_flag)
-        sizer_conds.Add(self.new_static("AC值："))
-        sizer_conds.Add(sizer_acs, border=g_border, flag=g_flag)
+        # sizer_conds.Add(self.new_static("AC值："))
+        # sizer_conds.Add(sizer_acs, border=g_border, flag=g_flag)
         sizer_conds.Add(self.new_static("对角线："))
         sizer_conds.Add(sizer_crosses, border=g_border, flag=g_flag)
         sizer_conds.Add(self.new_static("外围个数："))
@@ -633,13 +659,13 @@ class DBallFrame(wx.Frame):
         sizer_shoumojiou.Add(self.last_odd, border=0, flag=g_flag)                             
         sizer_conds_2.Add(sizer_shoumojiou, border=0, flag=g_flag)
 
-        sizer_conds_2.Add(self.new_static("不同尾数："))
-        sizer_conds_2.Add(sizer_diff_tails, border=g_border, flag=g_flag)
-        sizer_conds_2.Add(self.new_static("奇偶比："))
-        sizer_conds_2.Add(sizer_odds, border=g_border, flag=g_flag)
+        sizer_conds.Add(self.new_static("不同尾数："))
+        sizer_conds.Add(sizer_diff_tails, border=g_border, flag=g_flag)
+        sizer_conds.Add(self.new_static("奇偶比："))
+        sizer_conds.Add(sizer_odds, border=g_border, flag=g_flag)
 
-        sizer_conds_2.Add(self.new_static("和值范围："))
-        sizer_conds_2.Add(sizer_sum, border=g_border, flag=g_flag)
+        # sizer_conds_2.Add(self.new_static("和值范围："))
+        # sizer_conds_2.Add(sizer_sum, border=g_border, flag=g_flag)
         sizer_conds_2.Add(self.new_static("上期结果："))
         sizer_conds_2.Add(sizer_last_win, border=g_border, flag=g_flag)
         sizer_conds_2.Add(self.new_static("上期重复："))
@@ -769,7 +795,7 @@ class DBallFrame(wx.Frame):
         primes = self.get_primes()
         odds = self.get_odds()
         bigs = self.get_bigs()
-        acs = self.get_acs()
+        # acs = self.get_acs()
         diff_tails = self.get_diff_tails()
         crosses = self.get_crosses()
         outters = self.get_outters()
@@ -795,8 +821,8 @@ class DBallFrame(wx.Frame):
         if type(last_win) != type([]):
             self.out("错误：上期结果解析错误，请重新输入")
             return
-        if last_win and len(last_win) != 6:
-            self.out("错误：上期结果必须是6个数字")
+        if last_win and len(last_win) != g_elements:
+            self.out("错误：上期结果必须是%d个数字" % g_elements)
             return
 
         #
@@ -810,36 +836,35 @@ class DBallFrame(wx.Frame):
             self.out("错误：胆码不能超过3个")
             return
         nums = self.get_nums()
-        if len(danma) + len(nums) < 6:
-            self.out("错误：请选择至少%s个备选数字" % (6 - len(danma)))
+        if len(danma) + len(nums) < g_elements:
+            self.out("错误：请选择至少%s个备选数字" % (g_elements - len(danma)))
             return
         for n in danma:
             if n in nums:
                 self.out("错误：不可同时选择胆码和备选数字(%s)" % n)
                 return
 
-        try:
-            s = self.sum_low.GetValue()
-            if s == "":
-                sum_low = -1
-            else:
-                sum_low = int(s)
-        except:
-            self.out("错误：和值最小值输入有误")
-            return
-        try:
-            s = self.sum_high.GetValue()
-            if s == "":
-                sum_high = -1
-            else:
-                sum_high = int(s)
-        except:
-            self.out("错误：和值最大值输入有误")
-            return
-
-        if sum_low != -1 and sum_high != -1 and sum_low > sum_high:
-            self.out("错误：和值最小值大于最大值，请重新输入")
-            return
+        # try:
+        #     s = self.sum_low.GetValue()
+        #     if s == "":
+        #         sum_low = -1
+        #     else:
+        #         sum_low = int(s)
+        # except:
+        #     self.out("错误：和值最小值输入有误")
+        #     return
+        # try:
+        #     s = self.sum_high.GetValue()
+        #     if s == "":
+        #         sum_high = -1
+        #     else:
+        #         sum_high = int(s)
+        # except:
+        #     self.out("错误：和值最大值输入有误")
+        #     return
+        # if sum_low != -1 and sum_high != -1 and sum_low > sum_high:
+        #     self.out("错误：和值最小值大于最大值，请重新输入")
+        #     return
 
         params = {
             "danma_list": danma,
@@ -847,9 +872,9 @@ class DBallFrame(wx.Frame):
             "prime_n": primes,
             "odd_n": odds,
             "big_n": bigs,
-            "sum_low": sum_low,
-            "sum_high": sum_high,
-            "ac_val": acs,
+            "sum_low": -1, #sum_low,
+            "sum_high": -1, #sum_high,
+            "ac_val": [], #acs,
             "diff_tail_n": diff_tails,
             "first_odd": first_odd,
             "last_odd": last_odd,
