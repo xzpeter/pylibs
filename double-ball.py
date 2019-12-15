@@ -10,7 +10,7 @@ from itertools import combinations, permutations
 # TODO:
 # - Fix using Chinese character (search FIXME)
 
-g_version = "v0.71"
+g_version = "v0.72"
 g_changelog = """
 v0.5 (2019-04-08):
 - 添加“打印”和“更新日志”按键
@@ -31,6 +31,9 @@ v0.7 (2019-12-14):
 
 v0.71 (2019-12-14):
 - 修复“上期结果”总是6个数字
+
+v0.72 (2019-12-15):
+- 将输出结果由三列改为一列
 """
 g_title = "双色球缩水工具 - %s" % g_version
 g_debug = False
@@ -45,6 +48,7 @@ g_border2 = 3
 g_fontsize = 14
 g_flag = wx.ALL | wx.EXPAND
 g_elements = 8
+g_result_columes = 1
 
 # uncomment this to disable window resizing
 # g_style = wx.DEFAULT_FRAME_STYLE & ~(wx.RESIZE_BORDER | wx.MAXIMIZE_BOX)
@@ -898,7 +902,7 @@ class DBallFrame(wx.Frame):
         self.do_show_result(self.result)
 
     def do_show_result(self, result):
-        full_line = "-----------------------------------------------------------------------"
+        full_line = "-" * 24 * g_result_columes
         self.out("缩水结果：\n%s" % full_line)
         if not result:
             self.result_str = ""
@@ -909,7 +913,7 @@ class DBallFrame(wx.Frame):
             for entry in result:
                 str_res = " ".join(map(lambda x: "%02d" % x, entry))
                 result_str += "[%03s] %s" % (start, str_res)
-                if start % 3:
+                if start % g_result_columes:
                     result_str += " "
                 else:
                     result_str += "\n"
