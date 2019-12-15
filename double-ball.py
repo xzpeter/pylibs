@@ -10,7 +10,7 @@ from itertools import combinations, permutations
 # TODO:
 # - Fix using Chinese character (search FIXME)
 
-g_version = "v0.7"
+g_version = "v0.71"
 g_changelog = """
 v0.5 (2019-04-08):
 - 添加“打印”和“更新日志”按键
@@ -28,6 +28,9 @@ v0.6 (2019-06-06):
 v0.7 (2019-12-14):
 - 删除“和值范围”, “AC值”
 - 允许缩水结果为6，8或者10个数字
+
+v0.71 (2019-12-14):
+- 修复“上期结果”总是6个数字
 """
 g_title = "双色球缩水工具 - %s" % g_version
 g_debug = False
@@ -595,10 +598,7 @@ class DBallFrame(wx.Frame):
 
         sizer_last_win = wx.FlexGridSizer(1, 2, g_border2, g_border2)
         sizer_last_win.Add(self.last_win, border=0, flag=g_flag)
-        s = ""
-        for i in range(g_elements):
-            s += "%02d " % (i + 1)
-        sizer_last_win.Add(self.new_static("(例:%s)" % s))
+        sizer_last_win.Add(self.new_static("(例:01 02 03 04 05 06)"))
         sizer_last_nums = wx.GridSizer(1, 5, 3, 3)
         for item in self.last_nums:
             sizer_last_nums.Add(item, border=0, flag=g_flag)
@@ -821,8 +821,8 @@ class DBallFrame(wx.Frame):
         if type(last_win) != type([]):
             self.out("错误：上期结果解析错误，请重新输入")
             return
-        if last_win and len(last_win) != g_elements:
-            self.out("错误：上期结果必须是%d个数字" % g_elements)
+        if last_win and len(last_win) != 6:
+            self.out("错误：上期结果必须是6个数字")
             return
 
         #
