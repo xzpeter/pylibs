@@ -4,7 +4,6 @@
 import wx
 import math
 import sys
-import copy
 from datetime import datetime
 from itertools import combinations, permutations
 
@@ -12,7 +11,7 @@ from itertools import combinations, permutations
 # - Fix using Chinese character (search FIXME)
 # - Rewrite some codes to use lambda.  Refers to g_rowcol_list impl
 
-g_version = "v1.0.2"
+g_version = "v1.0.3"
 g_changelog = """
 v0.5 (2019-04-08):
 - 添加“打印”和“更新日志”按键
@@ -56,6 +55,13 @@ v1.0.2 (2020-10-16):
 - 增加“全选”，“清除”到数字选择区域
 - 去掉前十个数字默认选择的调试选项
 - 修改“四分区选择”，去掉17,并修复显示区域错误
+
+v1.0.3 (2020-10-17):
+- 每一个对钩增加背景颜色，选择后变色
+- 数字选项恢复为六行六列
+- 页面默认高度调整为850,适应高度变化
+- 调整输出结果为每行3个结果，数字空2格，结果间空5格
+- 重新加入“AC数值”
 """
 
 g_title = "双色球缩水工具 - %s" % g_version
@@ -63,7 +69,7 @@ g_debug = False
 g_prime_list = [1,2,3,5,7,11,13,17,19,23,29,31]
 g_cross_list = [1,6,8,11,15,16,21,22,26,29,31]
 g_outter_list = [1,2,3,4,5,6,7,12,13,18,19,24,25,30,31,32,33]
-g_size = (1280, 800)
+g_size = (1280, 850)
 g_checkbox_size = (100, 40)
 g_lastwin_size = (250, -1)
 g_output_size = (1280, 600)
@@ -72,7 +78,12 @@ g_border2 = 5
 g_fontsize = 14
 g_flag = wx.ALL | wx.EXPAND
 g_elements = 6
-g_result_columes = 1
+# 每行显示结果数
+g_result_columes = 3
+# 数字间分割符
+g_result_num_sep = "  "
+# 结果间分割符
+g_result_column_sep = "     "
 g_color_enable = (255, 0, 0)
 g_color_disable = (0, 255, 0)
 
@@ -188,309 +199,26 @@ class DBCore:
     def do_apply_checkboxes(self, boxes, value):
         for box in boxes:
             box.SetValue(value)
+            self.do_update_checkbox(box)
         self.refresh_static_texts()
 
-    def do_setall_primes(self, event):
-        for item in self.primes:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_primes(self, event):
-        for item in self.primes:
-            item.SetValue(False)
-        self.refresh_static_texts()
-
-    def do_setall_conts(self, event):
-        for item in self.conts:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_conts(self, event):
-        for item in self.conts:
-            item.SetValue(False)
-        self.refresh_static_texts()
-
-    def do_setall_primes(self, event):
-        for item in self.primes:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_primes(self, event):
-        for item in self.primes:
-            item.SetValue(False)
-        self.refresh_static_texts()
-
-    def do_setall_odds(self, event):
-        for item in self.odds:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_odds(self, event):
-        for item in self.odds:
-            item.SetValue(False)
-        self.refresh_static_texts()
-
-    def do_setall_bigs(self, event):
-        for item in self.bigs:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_bigs(self, event):
-        for item in self.bigs:
-            item.SetValue(False)
-        self.refresh_static_texts()
-
-    def do_setall_diff_tails(self, event):
-        for item in self.diff_tails:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_diff_tails(self, event):
-        for item in self.diff_tails:
-            item.SetValue(False)
-        self.refresh_static_texts()
-
-    def do_setall_outters(self, event):
-        for item in self.outters:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_outters(self, event):
-        for item in self.outters:
-            item.SetValue(False)
-        self.refresh_static_texts()
-
-    def do_setall_range0(self, event):
-        for item in self.range0:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_range0(self, event):
-        for item in self.range0:
-            item.SetValue(False)
-        self.refresh_static_texts()
-    def do_setall_range1(self, event):
-        for item in self.range1:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_range1(self, event):
-        for item in self.range1:
-            item.SetValue(False)
-        self.refresh_static_texts()
-    def do_setall_range2(self, event):
-        for item in self.range2:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_range2(self, event):
-        for item in self.range2:
-            item.SetValue(False)
-        self.refresh_static_texts()
-
-    def do_setall_zone4range0(self, event):
-        for item in self.zone4range0:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_zone4range0(self, event):
-        for item in self.zone4range0:
-            item.SetValue(False)
-        self.refresh_static_texts()
-    def do_setall_zone4range1(self, event):
-        for item in self.zone4range1:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_zone4range1(self, event):
-        for item in self.zone4range1:
-            item.SetValue(False)
-        self.refresh_static_texts()
-    def do_setall_zone4range2(self, event):
-        for item in self.zone4range2:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_zone4range2(self, event):
-        for item in self.zone4range2:
-            item.SetValue(False)
-        self.refresh_static_texts()
-    def do_setall_zone4range3(self, event):
-        for item in self.zone4range3:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_zone4range3(self, event):
-        for item in self.zone4range3:
-            item.SetValue(False)
-        self.refresh_static_texts()
-
-    def do_setall_corner4range0(self, event):
-        for item in self.corner4range0:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_corner4range0(self, event):
-        for item in self.corner4range0:
-            item.SetValue(False)
-        self.refresh_static_texts()
-    def do_setall_corner4range1(self, event):
-        for item in self.corner4range1:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_corner4range1(self, event):
-        for item in self.corner4range1:
-            item.SetValue(False)
-        self.refresh_static_texts()
-    def do_setall_corner4range2(self, event):
-        for item in self.corner4range2:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_corner4range2(self, event):
-        for item in self.corner4range2:
-            item.SetValue(False)
-        self.refresh_static_texts()
-    def do_setall_corner4range3(self, event):
-        for item in self.corner4range3:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_corner4range3(self, event):
-        for item in self.corner4range3:
-            item.SetValue(False)
-        self.refresh_static_texts()
-
-    def do_setall_crosses(self, event):
-        for item in self.crosses:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_crosses(self, event):
-        for item in self.crosses:
-            item.SetValue(False)
-        self.refresh_static_texts()
-
-    def do_setall_three0(self, event):
-        for item in self.three0:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_three0(self, event):
-        for item in self.three0:
-            item.SetValue(False)
-        self.refresh_static_texts()
-    def do_setall_three1(self, event):
-        for item in self.three1:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_three1(self, event):
-        for item in self.three1:
-            item.SetValue(False)
-        self.refresh_static_texts()
-    def do_setall_three2(self, event):
-        for item in self.three2:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_three2(self, event):
-        for item in self.three2:
-            item.SetValue(False)
-        self.refresh_static_texts()
-
-    def do_setall_four0(self, event):
-        for item in self.four0:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_four0(self, event):
-        for item in self.four0:
-            item.SetValue(False)
-        self.refresh_static_texts()
-    def do_setall_four1(self, event):
-        for item in self.four1:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_four1(self, event):
-        for item in self.four1:
-            item.SetValue(False)
-        self.refresh_static_texts()
-    def do_setall_four2(self, event):
-        for item in self.four2:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_four2(self, event):
-        for item in self.four2:
-            item.SetValue(False)
-        self.refresh_static_texts()
-    def do_setall_four3(self, event):
-        for item in self.four3:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_four3(self, event):
-        for item in self.four3:
-            item.SetValue(False)
-        self.refresh_static_texts()
-
-    def do_setall_five0(self, event):
-        for item in self.five0:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_five0(self, event):
-        for item in self.five0:
-            item.SetValue(False)
-        self.refresh_static_texts()
-    def do_setall_five1(self, event):
-        for item in self.five1:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_five1(self, event):
-        for item in self.five1:
-            item.SetValue(False)
-        self.refresh_static_texts()
-    def do_setall_five2(self, event):
-        for item in self.five2:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_five2(self, event):
-        for item in self.five2:
-            item.SetValue(False)
-        self.refresh_static_texts()
-    def do_setall_five3(self, event):
-        for item in self.five3:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_five3(self, event):
-        for item in self.five3:
-            item.SetValue(False)
-        self.refresh_static_texts()
-    def do_setall_five4(self, event):
-        for item in self.five4:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_five4(self, event):
-        for item in self.five4:
-            item.SetValue(False)
-        self.refresh_static_texts()
-
-    def do_setall_small_odds(self, event):
-        for item in self.small_odds:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_small_odds(self, event):
-        for item in self.small_odds:
-            item.SetValue(False)
-        self.refresh_static_texts()
-    def do_setall_big_odds(self, event):
-        for item in self.big_odds:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_big_odds(self, event):
-        for item in self.big_odds:
-            item.SetValue(False)
-        self.refresh_static_texts()
-    def do_setall_small_evens(self, event):
-        for item in self.small_evens:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_small_evens(self, event):
-        for item in self.small_evens:
-            item.SetValue(False)
-        self.refresh_static_texts()
-    def do_setall_big_evens(self, event):
-        for item in self.big_evens:
-            item.SetValue(True)
-        self.refresh_static_texts()
-    def do_clearall_big_evens(self, event):
-        for item in self.big_evens:
-            item.SetValue(False)
-        self.refresh_static_texts()
+    def color_set(self, item, enable):
+        if enable:
+            item.SetBackgroundColour(g_color_enable)
+        else:
+            item.SetBackgroundColour(g_color_disable)
 
     def do_quit(self, event):
         print("Quitting...")
         self.quit_app()
 
-    def do_scan_checkboxes(self, event):
+    def do_update_checkbox(self, new):
+        self.color_set(new, new.GetValue())
         self.refresh_static_texts()
+
+    def refresh_checkboxes(self):
+        for box in self.items_checkboxes:
+            self.do_update_checkbox(box)
 
     def refresh_static_texts(self):
         for entry in self.dynamic_statics:
@@ -500,10 +228,7 @@ class DBCore:
                 if cb.GetValue():
                     enabled = True
                     break
-            if enabled:
-                static.SetBackgroundColour(g_color_enable)
-            else:
-                static.SetBackgroundColour(g_color_disable)
+            self.color_set(static, enabled)
 
     def do_print(self, event):
         if not self.result:
@@ -521,6 +246,10 @@ class DBCore:
         self.clear()
         self.out(g_changelog.strip())
 
+    def refresh_all(self):
+        self.refresh_static_texts()
+        self.refresh_checkboxes()
+
     def do_reset(self, event):
         self.clear()
         for box in self.items_checkboxes:
@@ -530,7 +259,7 @@ class DBCore:
         self.first_odd.SetSelection(-1)
         self.last_odd.SetSelection(-1)
         self.last_win.SetValue("")
-        self.refresh_static_texts()
+        self.refresh_all()
         self.out("所有参数已重置！")
 
     def apply_font(self):
@@ -1120,7 +849,7 @@ class DBCore:
         small_evens = self.get_small_evens()
         big_evens = self.get_big_evens()
         bigs = self.get_bigs()
-        # acs = self.get_acs()
+        acs = self.get_acs()
         diff_tails = self.get_diff_tails()
         crosses = self.get_crosses()
         outters = self.get_outters()
@@ -1201,7 +930,7 @@ class DBCore:
             "big_n": bigs,
             "sum_low": -1, #sum_low,
             "sum_high": -1, #sum_high,
-            "ac_val": [], #acs,
+            "ac_val": acs,
             "diff_tail_n": diff_tails,
             "first_odd": first_odd,
             "last_odd": last_odd,
@@ -1238,7 +967,12 @@ class DBCore:
         self.show_result(self.result)
 
     def show_result(self, result):
-        full_line = "-" * 24 * g_result_columes
+        n_num_sep = len(g_result_num_sep)
+        n_col_sep = len(g_result_column_sep)
+        n = g_elements
+        length = ((2 + n_num_sep) * n - n_num_sep + n_col_sep) \
+            * g_result_columes - n_col_sep
+        full_line = "-" * length
         self.out("缩水结果 (共 %s 个)：\n%s" % (len(result), full_line))
         if not result:
             self.result_str = ""
@@ -1247,10 +981,10 @@ class DBCore:
             start = 1
             result_str = "" 
             for entry in result:
-                str_res = "    ".join(map(lambda x: "%02d" % x, entry))
+                str_res = g_result_num_sep.join(map(lambda x: "%02d" % x, entry))
                 result_str += "%s" % str_res
                 if start % g_result_columes:
-                    result_str += " "
+                    result_str += g_result_column_sep
                 else:
                     result_str += "\n"
                 if start % 15 == 0:
@@ -1278,7 +1012,9 @@ class DBPanel(wx.Panel):
 
     def new_checkbox(self, value):
         new = wx.CheckBox(self, wx.ID_ANY, value, size=g_checkbox_size)
-        self.Bind(wx.EVT_CHECKBOX, self.core.do_scan_checkboxes, new)
+        self.Bind(wx.EVT_CHECKBOX,
+                  lambda event, x=new: self.core.do_update_checkbox(new),
+                  new)
         self.core.items_checkboxes.append(new)
         return new
 
@@ -1287,7 +1023,7 @@ class DBPanel(wx.Panel):
         self.core.items_buttons.append(new)
         return new
 
-    def new_button_setall(self, checkboxes=None):
+    def new_button_setall(self, checkboxes):
         button = self.new_button("全选")
         # Note!  This is different from:
         # lambda event: self.core.do_apply_checkboxes(x, True),
@@ -1300,7 +1036,7 @@ class DBPanel(wx.Panel):
                 self.core.do_apply_checkboxes(x, True),
                 button)
         return button
-    def new_button_clearall(self, checkboxes=None):
+    def new_button_clearall(self, checkboxes):
         button = self.new_button("清除")
         # Check above comment
         if checkboxes:
@@ -1382,18 +1118,12 @@ class DBModPanel(DBPanel):
         for i in range(0, g_elements + 1):
             box = self.new_checkbox("%s" % i)
             self.core.three2.append(box)
-        self.button_three0_setall = self.new_button_setall()
-        self.bind_button(self.core.do_setall_three0, self.button_three0_setall)
-        self.button_three0_clearall = self.new_button_clearall()
-        self.bind_button(self.core.do_clearall_three0, self.button_three0_clearall)
-        self.button_three1_setall = self.new_button_setall()
-        self.bind_button(self.core.do_setall_three1, self.button_three1_setall)
-        self.button_three1_clearall = self.new_button_clearall()
-        self.bind_button(self.core.do_clearall_three1, self.button_three1_clearall)
-        self.button_three2_setall = self.new_button_setall()
-        self.bind_button(self.core.do_setall_three2, self.button_three2_setall)
-        self.button_three2_clearall = self.new_button_clearall()
-        self.bind_button(self.core.do_clearall_three2, self.button_three2_clearall)
+        self.button_three0_setall = self.new_button_setall(self.core.three0)
+        self.button_three0_clearall = self.new_button_clearall(self.core.three0)
+        self.button_three1_setall = self.new_button_setall(self.core.three1)
+        self.button_three1_clearall = self.new_button_clearall(self.core.three1)
+        self.button_three2_setall = self.new_button_setall(self.core.three2)
+        self.button_three2_clearall = self.new_button_clearall(self.core.three2)
 
         # divide 4
         self.core.four0 = []
@@ -1412,22 +1142,14 @@ class DBModPanel(DBPanel):
         for i in range(0, g_elements + 1):
             box = self.new_checkbox("%s" % i)
             self.core.four3.append(box)
-        self.button_four0_setall = self.new_button_setall()
-        self.bind_button(self.core.do_setall_four0, self.button_four0_setall)
-        self.button_four0_clearall = self.new_button_clearall()
-        self.bind_button(self.core.do_clearall_four0, self.button_four0_clearall)
-        self.button_four1_setall = self.new_button_setall()
-        self.bind_button(self.core.do_setall_four1, self.button_four1_setall)
-        self.button_four1_clearall = self.new_button_clearall()
-        self.bind_button(self.core.do_clearall_four1, self.button_four1_clearall)
-        self.button_four2_setall = self.new_button_setall()
-        self.bind_button(self.core.do_setall_four2, self.button_four2_setall)
-        self.button_four2_clearall = self.new_button_clearall()
-        self.bind_button(self.core.do_clearall_four2, self.button_four2_clearall)
-        self.button_four3_setall = self.new_button_setall()
-        self.bind_button(self.core.do_setall_four3, self.button_four3_setall)
-        self.button_four3_clearall = self.new_button_clearall()
-        self.bind_button(self.core.do_clearall_four3, self.button_four3_clearall)
+        self.button_four0_setall = self.new_button_setall(self.core.four0)
+        self.button_four0_clearall = self.new_button_clearall(self.core.four0)
+        self.button_four1_setall = self.new_button_setall(self.core.four1)
+        self.button_four1_clearall = self.new_button_clearall(self.core.four1)
+        self.button_four2_setall = self.new_button_setall(self.core.four2)
+        self.button_four2_clearall = self.new_button_clearall(self.core.four2)
+        self.button_four3_setall = self.new_button_setall(self.core.four3)
+        self.button_four3_clearall = self.new_button_clearall(self.core.four3)
 
         # divide 5
         self.core.five0 = []
@@ -1450,26 +1172,16 @@ class DBModPanel(DBPanel):
         for i in range(0, g_elements + 1):
             box = self.new_checkbox("%s" % i)
             self.core.five4.append(box)
-        self.button_five0_setall = self.new_button_setall()
-        self.bind_button(self.core.do_setall_five0, self.button_five0_setall)
-        self.button_five0_clearall = self.new_button_clearall()
-        self.bind_button(self.core.do_clearall_five0, self.button_five0_clearall)
-        self.button_five1_setall = self.new_button_setall()
-        self.bind_button(self.core.do_setall_five1, self.button_five1_setall)
-        self.button_five1_clearall = self.new_button_clearall()
-        self.bind_button(self.core.do_clearall_five1, self.button_five1_clearall)
-        self.button_five2_setall = self.new_button_setall()
-        self.bind_button(self.core.do_setall_five2, self.button_five2_setall)
-        self.button_five2_clearall = self.new_button_clearall()
-        self.bind_button(self.core.do_clearall_five2, self.button_five2_clearall)
-        self.button_five3_setall = self.new_button_setall()
-        self.bind_button(self.core.do_setall_five3, self.button_five3_setall)
-        self.button_five3_clearall = self.new_button_clearall()
-        self.bind_button(self.core.do_clearall_five3, self.button_five3_clearall)
-        self.button_five4_setall = self.new_button_setall()
-        self.bind_button(self.core.do_setall_five4, self.button_five4_setall)
-        self.button_five4_clearall = self.new_button_clearall()
-        self.bind_button(self.core.do_clearall_five4, self.button_five4_clearall)
+        self.button_five0_setall = self.new_button_setall(self.core.five0)
+        self.button_five0_clearall = self.new_button_clearall(self.core.five0)
+        self.button_five1_setall = self.new_button_setall(self.core.five1)
+        self.button_five1_clearall = self.new_button_clearall(self.core.five1)
+        self.button_five2_setall = self.new_button_setall(self.core.five2)
+        self.button_five2_clearall = self.new_button_clearall(self.core.five2)
+        self.button_five3_setall = self.new_button_setall(self.core.five3)
+        self.button_five3_clearall = self.new_button_clearall(self.core.five3)
+        self.button_five4_setall = self.new_button_setall(self.core.five4)
+        self.button_five4_clearall = self.new_button_clearall(self.core.five4)
 
     def __do_layout(self):
         sizer_conds = wx.FlexGridSizer(20, 2, 0, 0)
@@ -1591,18 +1303,12 @@ class DBPositionPanel(DBPanel):
         for i in range(0, g_elements + 1):
             box = self.new_checkbox("%s" % i)
             self.core.range2.append(box)
-        self.button_range0_setall = self.new_button_setall()
-        self.button_range0_clearall = self.new_button_clearall()
-        self.bind_button(self.core.do_setall_range0, self.button_range0_setall)
-        self.bind_button(self.core.do_clearall_range0, self.button_range0_clearall)
-        self.button_range1_setall = self.new_button_setall()
-        self.button_range1_clearall = self.new_button_clearall()
-        self.bind_button(self.core.do_setall_range1, self.button_range1_setall)
-        self.bind_button(self.core.do_clearall_range1, self.button_range1_clearall)
-        self.button_range2_setall = self.new_button_setall()
-        self.button_range2_clearall = self.new_button_clearall()
-        self.bind_button(self.core.do_setall_range2, self.button_range2_setall)
-        self.bind_button(self.core.do_clearall_range2, self.button_range2_clearall)
+        self.button_range0_setall = self.new_button_setall(self.core.range0)
+        self.button_range0_clearall = self.new_button_clearall(self.core.range0)
+        self.button_range1_setall = self.new_button_setall(self.core.range1)
+        self.button_range1_clearall = self.new_button_clearall(self.core.range1)
+        self.button_range2_setall = self.new_button_setall(self.core.range2)
+        self.button_range2_clearall = self.new_button_clearall(self.core.range2)
 
         # 四分区
         self.core.zone4range0 = []
@@ -1621,22 +1327,14 @@ class DBPositionPanel(DBPanel):
         for i in range(0, g_elements + 1):
             box = self.new_checkbox("%s" % i)
             self.core.zone4range3.append(box)
-        self.button_zone4range0_setall = self.new_button_setall()
-        self.button_zone4range0_clearall = self.new_button_clearall()
-        self.bind_button(self.core.do_setall_zone4range0, self.button_zone4range0_setall)
-        self.bind_button(self.core.do_clearall_zone4range0, self.button_zone4range0_clearall)
-        self.button_zone4range1_setall = self.new_button_setall()
-        self.button_zone4range1_clearall = self.new_button_clearall()
-        self.bind_button(self.core.do_setall_zone4range1, self.button_zone4range1_setall)
-        self.bind_button(self.core.do_clearall_zone4range1, self.button_zone4range1_clearall)
-        self.button_zone4range2_setall = self.new_button_setall()
-        self.button_zone4range2_clearall = self.new_button_clearall()
-        self.bind_button(self.core.do_setall_zone4range2, self.button_zone4range2_setall)
-        self.bind_button(self.core.do_clearall_zone4range2, self.button_zone4range2_clearall)
-        self.button_zone4range3_setall = self.new_button_setall()
-        self.button_zone4range3_clearall = self.new_button_clearall()
-        self.bind_button(self.core.do_setall_zone4range3, self.button_zone4range3_setall)
-        self.bind_button(self.core.do_clearall_zone4range3, self.button_zone4range3_clearall)
+        self.button_zone4range0_setall = self.new_button_setall(self.core.zone4range0)
+        self.button_zone4range0_clearall = self.new_button_clearall(self.core.zone4range0)
+        self.button_zone4range1_setall = self.new_button_setall(self.core.zone4range1)
+        self.button_zone4range1_clearall = self.new_button_clearall(self.core.zone4range1)
+        self.button_zone4range2_setall = self.new_button_setall(self.core.zone4range2)
+        self.button_zone4range2_clearall = self.new_button_clearall(self.core.zone4range2)
+        self.button_zone4range3_setall = self.new_button_setall(self.core.zone4range3)
+        self.button_zone4range3_clearall = self.new_button_clearall(self.core.zone4range3)
 
         # 四角分区
         self.core.corner4range0 = []
@@ -1655,22 +1353,14 @@ class DBPositionPanel(DBPanel):
         for i in range(0, g_elements + 1):
             box = self.new_checkbox("%s" % i)
             self.core.corner4range3.append(box)
-        self.button_corner4range0_setall = self.new_button_setall()
-        self.button_corner4range0_clearall = self.new_button_clearall()
-        self.bind_button(self.core.do_setall_corner4range0, self.button_corner4range0_setall)
-        self.bind_button(self.core.do_clearall_corner4range0, self.button_corner4range0_clearall)
-        self.button_corner4range1_setall = self.new_button_setall()
-        self.button_corner4range1_clearall = self.new_button_clearall()
-        self.bind_button(self.core.do_setall_corner4range1, self.button_corner4range1_setall)
-        self.bind_button(self.core.do_clearall_corner4range1, self.button_corner4range1_clearall)
-        self.button_corner4range2_setall = self.new_button_setall()
-        self.button_corner4range2_clearall = self.new_button_clearall()
-        self.bind_button(self.core.do_setall_corner4range2, self.button_corner4range2_setall)
-        self.bind_button(self.core.do_clearall_corner4range2, self.button_corner4range2_clearall)
-        self.button_corner4range3_setall = self.new_button_setall()
-        self.button_corner4range3_clearall = self.new_button_clearall()
-        self.bind_button(self.core.do_setall_corner4range3, self.button_corner4range3_setall)
-        self.bind_button(self.core.do_clearall_corner4range3, self.button_corner4range3_clearall)
+        self.button_corner4range0_setall = self.new_button_setall(self.core.corner4range0)
+        self.button_corner4range0_clearall = self.new_button_clearall(self.core.corner4range0)
+        self.button_corner4range1_setall = self.new_button_setall(self.core.corner4range1)
+        self.button_corner4range1_clearall = self.new_button_clearall(self.core.corner4range1)
+        self.button_corner4range2_setall = self.new_button_setall(self.core.corner4range2)
+        self.button_corner4range2_clearall = self.new_button_clearall(self.core.corner4range2)
+        self.button_corner4range3_setall = self.new_button_setall(self.core.corner4range3)
+        self.button_corner4range3_clearall = self.new_button_clearall(self.core.corner4range3)
 
     def __do_layout(self):
         sizer_conds = wx.FlexGridSizer(19, 2, 5, 5)
@@ -1830,19 +1520,22 @@ class DBOtherPanel(DBPanel):
         for i in range(0, g_elements + 1):
             box = self.new_checkbox("%s" % i)
             self.core.outters.append(box)
-        self.button_outters_setall = self.new_button_setall()
-        self.bind_button(self.core.do_setall_outters, self.button_outters_setall)
-        self.button_outters_clearall = self.new_button_clearall()
-        self.bind_button(self.core.do_clearall_outters, self.button_outters_clearall)
+        self.button_outters_setall = self.new_button_setall(self.core.outters)
+        self.button_outters_clearall = self.new_button_clearall(self.core.outters)
 
         self.core.crosses = []
         for i in range(0, g_elements + 1):
             box = self.new_checkbox("%s" % i)
             self.core.crosses.append(box)
-        self.button_crosses_setall = self.new_button_setall()
-        self.button_crosses_clearall = self.new_button_clearall()
-        self.bind_button(self.core.do_setall_crosses, self.button_crosses_setall)
-        self.bind_button(self.core.do_clearall_crosses, self.button_crosses_clearall)
+        self.button_crosses_setall = self.new_button_setall(self.core.crosses)
+        self.button_crosses_clearall = self.new_button_clearall(self.core.crosses)
+
+        self.core.acs = []
+        for i in range(1, 11):
+            box = self.new_checkbox("%s" % i)
+            self.core.acs.append(box)
+        self.button_acs_setall = self.new_button_setall(self.core.acs)
+        self.button_acs_clearall = self.new_button_clearall(self.core.acs)
 
     def __do_layout(self):
         sizer_conds_2 = wx.FlexGridSizer(12, 2, 5, 5)
@@ -1859,10 +1552,18 @@ class DBOtherPanel(DBPanel):
         sizer_crosses.Add(self.button_crosses_setall, flag=g_flag)
         sizer_crosses.Add(self.button_crosses_clearall, flag=g_flag)
 
+        sizer_acs = wx.GridSizer(2, 6, g_border2, g_border2)
+        for ac in self.core.acs:
+            sizer_acs.Add(ac, flag=g_flag)
+        sizer_acs.Add(self.button_acs_setall, flag=g_flag)
+        sizer_acs.Add(self.button_acs_clearall, flag=g_flag)
+
         sizer_conds_2.Add(self.new_static("外围个数：", self.core.outters))
         sizer_conds_2.Add(sizer_outters, border=g_border, flag=g_flag)
         sizer_conds_2.Add(self.new_static("对角线：", self.core.crosses))
         sizer_conds_2.Add(sizer_crosses, border=g_border, flag=g_flag)
+        sizer_conds_2.Add(self.new_static("AC值：", self.core.acs))
+        sizer_conds_2.Add(sizer_acs, border=g_border, flag=g_flag)
 
         sizer_danma_in = wx.FlexGridSizer(1, 2, 3, 3)
         sizer_danma_in.Add(self.core.danma, flag=g_flag)
@@ -1913,103 +1614,67 @@ class DBMainPanel(DBPanel):
         for i in range(0, g_elements + 1):
             box = self.new_checkbox("%s:%s" % (i, g_elements-i))
             self.core.primes.append(box)
-        self.button_setall_primes = self.new_button_setall()
-        self.button_clearall_primes = self.new_button_clearall()
-        self.bind_button(self.core.do_setall_primes,
-                         self.button_setall_primes)
-        self.bind_button(self.core.do_clearall_primes,
-                         self.button_clearall_primes)
+        self.button_setall_primes = self.new_button_setall(self.core.primes)
+        self.button_clearall_primes = self.new_button_clearall(self.core.primes)
 
         self.core.odds = []
         for i in range(0, g_elements + 1):
             box = self.new_checkbox("%s:%s" % (i, g_elements-i))
             self.core.odds.append(box)
-        self.button_setall_odds = self.new_button_setall()
-        self.button_clearall_odds = self.new_button_clearall()
-        self.bind_button(self.core.do_setall_odds,
-                         self.button_setall_odds)
-        self.bind_button(self.core.do_clearall_odds,
-                         self.button_clearall_odds)
+        self.button_setall_odds = self.new_button_setall(self.core.odds)
+        self.button_clearall_odds = self.new_button_clearall(self.core.odds)
 
         self.core.small_odds = []
         for i in range(0, g_elements + 1):
             box = self.new_checkbox("%s" % i)
             self.core.small_odds.append(box)
-        self.button_setall_small_odds = self.new_button_setall()
-        self.button_clearall_small_odds = self.new_button_clearall()
-        self.bind_button(self.core.do_setall_small_odds,
-                         self.button_setall_small_odds)
-        self.bind_button(self.core.do_clearall_small_odds,
-                         self.button_clearall_small_odds)
+        self.button_setall_small_odds = self.new_button_setall(self.core.small_odds)
+        self.button_clearall_small_odds = self.new_button_clearall(self.core.small_odds)
         self.core.big_odds = []
         for i in range(0, g_elements + 1):
             box = self.new_checkbox("%s" % i)
             self.core.big_odds.append(box)
-        self.button_setall_big_odds = self.new_button_setall()
-        self.button_clearall_big_odds = self.new_button_clearall()
-        self.bind_button(self.core.do_setall_big_odds,
-                         self.button_setall_big_odds)
-        self.bind_button(self.core.do_clearall_big_odds,
-                         self.button_clearall_big_odds)
+        self.button_setall_big_odds = self.new_button_setall(self.core.big_odds)
+        self.button_clearall_big_odds = self.new_button_clearall(self.core.big_odds)
         self.core.small_evens = []
         for i in range(0, g_elements + 1):
             box = self.new_checkbox("%s" % i)
             self.core.small_evens.append(box)
-        self.button_setall_small_evens = self.new_button_setall()
-        self.button_clearall_small_evens = self.new_button_clearall()
-        self.bind_button(self.core.do_setall_small_evens,
-                         self.button_setall_small_evens)
-        self.bind_button(self.core.do_clearall_small_evens,
-                         self.button_clearall_small_evens)
+        self.button_setall_small_evens = self.new_button_setall(self.core.small_evens)
+        self.button_clearall_small_evens = self.new_button_clearall(self.core.small_evens)
         self.core.big_evens = []
         for i in range(0, g_elements + 1):
             box = self.new_checkbox("%s" % i)
             self.core.big_evens.append(box)
-        self.button_setall_big_evens = self.new_button_setall()
-        self.button_clearall_big_evens = self.new_button_clearall()
-        self.bind_button(self.core.do_setall_big_evens,
-                         self.button_setall_big_evens)
-        self.bind_button(self.core.do_clearall_big_evens,
-                         self.button_clearall_big_evens)
+        self.button_setall_big_evens = self.new_button_setall(self.core.big_evens)
+        self.button_clearall_big_evens = self.new_button_clearall(self.core.big_evens)
 
         self.core.bigs = []
         for i in range(0, g_elements + 1):
             box = self.new_checkbox("%s:%s" % (i, g_elements-i))
             self.core.bigs.append(box)
-        self.button_setall_bigs = self.new_button_setall()
-        self.button_clearall_bigs = self.new_button_clearall()
-        self.bind_button(self.core.do_setall_bigs,
-                         self.button_setall_bigs)
-        self.bind_button(self.core.do_clearall_bigs,
-                         self.button_clearall_bigs)
+        self.button_setall_bigs = self.new_button_setall(self.core.bigs)
+        self.button_clearall_bigs = self.new_button_clearall(self.core.bigs)
 
         self.core.diff_tails = []
         for i in range(3, g_elements + 1):
             box = self.new_checkbox("%s" % i)
             self.core.diff_tails.append(box)
-        self.button_setall_diff_tails = self.new_button_setall()
-        self.button_clearall_diff_tails = self.new_button_clearall()
-        self.bind_button(self.core.do_setall_diff_tails,
-                         self.button_setall_diff_tails)
-        self.bind_button(self.core.do_clearall_diff_tails,
-                         self.button_clearall_diff_tails)
+        self.button_setall_diff_tails = self.new_button_setall(self.core.diff_tails)
+        self.button_clearall_diff_tails = self.new_button_clearall(self.core.diff_tails)
 
         self.core.conts = []
         for i in range(0, g_elements):
             box = self.new_checkbox("%s" % i)
             self.core.conts.append(box)
-        self.button_setall_conts = self.new_button_setall()
-        self.button_clearall_conts = self.new_button_clearall()
-        self.bind_button(self.core.do_setall_conts,
-                         self.button_setall_conts)
-        self.bind_button(self.core.do_clearall_conts,
-                         self.button_clearall_conts)
+        self.button_setall_conts = self.new_button_setall(self.core.conts)
+        self.button_clearall_conts = self.new_button_clearall(self.core.conts)
 
     def __do_layout(self):
         sizer_conds = wx.FlexGridSizer(19, 2, 5, 5)
 
         # Conditions REGION
-        sizer_numbers_in = wx.GridSizer(4, 9, g_border2, g_border2)
+        sizer_numbers_in = wx.GridSizer(6, 6, g_border2, g_border2)
         for num in self.core.numbers:
             sizer_numbers_in.Add(num, flag=g_flag)
         self.sizer_fill(sizer_numbers_in, 1);
@@ -2031,7 +1696,6 @@ class DBMainPanel(DBPanel):
             sizer_bigs.Add(big, flag=g_flag)
         sizer_bigs.Add(self.button_setall_bigs, flag=g_flag)
         sizer_bigs.Add(self.button_clearall_bigs, flag=g_flag)
-        sizer_acs = wx.GridSizer(2, 5, g_border2, g_border2)
 
         sizer_diff_tails = wx.GridSizer(1, g_elements + 3, g_border2, g_border2)
         for tail in self.core.diff_tails:
@@ -2128,7 +1792,7 @@ class MyApp(wx.App):
         if g_debug:
             for i in range(1, 10):
                 core.numbers[i-1].SetValue(True)
-        core.refresh_static_texts()
+        core.refresh_all()
 
         self.SetTopWindow(outter_frame)
         outter_frame.Layout()
