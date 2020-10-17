@@ -12,7 +12,7 @@ from itertools import combinations, permutations
 # - Fix using Chinese character (search FIXME)
 # - Rewrite some codes to use lambda.  Refers to g_rowcol_list impl
 
-g_version = "v1.0.1"
+g_version = "v1.0.2"
 g_changelog = """
 v0.5 (2019-04-08):
 - 添加“打印”和“更新日志”按键
@@ -51,10 +51,15 @@ v1.0 (2020-10-12):
 
 v1.0.1 (2020-10-16):
 - 增加 “八行列四分区空行（无17）”
+
+v1.0.2 (2020-10-16):
+- 增加“全选”，“清除”到数字选择区域
+- 去掉前十个数字默认选择的调试选项
+- 修改“四分区选择”，去掉17,并修复显示区域错误
 """
 
 g_title = "双色球缩水工具 - %s" % g_version
-g_debug = True
+g_debug = False
 g_prime_list = [1,2,3,5,7,11,13,17,19,23,29,31]
 g_cross_list = [1,6,8,11,15,16,21,22,26,29,31]
 g_outter_list = [1,2,3,4,5,6,7,12,13,18,19,24,25,30,31,32,33]
@@ -682,7 +687,17 @@ class DBCore:
         return cnt
 
     def get_zone4range(self, n):
-        return int((n - 1) / 8)
+        if n >= 1 and n <= 8:
+            return 0
+        elif n >= 9 and n <= 16:
+            return 1
+        elif n >= 18 and n <= 25:
+            return 2
+        elif n >= 26 and n <= 33:
+            return 3
+        else:
+            # 17 or invalid
+            return -1
 
     def count_zone4range(self, n_list, rng):
         cnt = 0
@@ -1732,9 +1747,9 @@ class DBPositionPanel(DBPanel):
         sizer_conds.Add(sizer_zone4range0, border=g_border, flag=g_flag)
         sizer_conds.Add(self.new_static("第二区间（09-16）：", self.core.zone4range1))
         sizer_conds.Add(sizer_zone4range1, border=g_border, flag=g_flag)
-        sizer_conds.Add(self.new_static("第三区间（17-24）：", self.core.zone4range2))
+        sizer_conds.Add(self.new_static("第三区间（18-25）：", self.core.zone4range2))
         sizer_conds.Add(sizer_zone4range2, border=g_border, flag=g_flag)
-        sizer_conds.Add(self.new_static("第四区间（18-33）：", self.core.zone4range3))
+        sizer_conds.Add(self.new_static("第四区间（26-33）：", self.core.zone4range3))
         sizer_conds.Add(sizer_zone4range3, border=g_border, flag=g_flag)
         sizer_conds.Add(self.new_static("四角选择："))
         sizer_conds.Add(self.new_static(""))
@@ -1891,6 +1906,8 @@ class DBMainPanel(DBPanel):
         for i in range(1, 34):
             box = self.new_checkbox("%02d" % i)
             self.core.numbers.append(box)
+        self.button_setall_numbers = self.new_button_setall(self.core.numbers)
+        self.button_clearall_numbers = self.new_button_clearall(self.core.numbers)
 
         self.core.primes = []
         for i in range(0, g_elements + 1):
@@ -1995,6 +2012,9 @@ class DBMainPanel(DBPanel):
         sizer_numbers_in = wx.GridSizer(4, 9, g_border2, g_border2)
         for num in self.core.numbers:
             sizer_numbers_in.Add(num, flag=g_flag)
+        self.sizer_fill(sizer_numbers_in, 1);
+        sizer_numbers_in.Add(self.button_setall_numbers, flag=g_flag)
+        sizer_numbers_in.Add(self.button_clearall_numbers, flag=g_flag)
 
         sizer_primes = wx.GridSizer(1, g_elements + 3, g_border2, g_border2)
         for prime in self.core.primes:
@@ -2048,7 +2068,7 @@ class DBMainPanel(DBPanel):
         sizer_big_evens.Add(self.button_setall_big_evens, flag=g_flag)
         sizer_big_evens.Add(self.button_clearall_big_evens, flag=g_flag)
 
-        sizer_conds.Add(self.new_static("数字选择："))
+        sizer_conds.Add(self.new_static("数字选择：", self.core.numbers))
         sizer_conds.Add(sizer_numbers_in, flag=g_flag)
         sizer_conds.Add(self.new_static("质合比：", self.core.primes))
         sizer_conds.Add(sizer_primes, border=g_border, flag=g_flag)
