@@ -216,6 +216,10 @@ class DBCore:
         print("Quitting...")
         self.quit_app()
 
+    def refresh(self):
+        # This is required for Windows
+        self.outter_frame.Refresh()
+
     def do_update_checkbox(self, new):
         self.color_set(new, new.GetValue())
         self.refresh_static_texts()
@@ -223,6 +227,7 @@ class DBCore:
     def refresh_checkboxes(self):
         for box in self.items_checkboxes:
             self.do_update_checkbox(box)
+        self.refresh()
 
     def refresh_static_texts(self):
         for entry in self.dynamic_statics:
@@ -233,6 +238,7 @@ class DBCore:
                     enabled = True
                     break
             self.color_set(static, enabled)
+        self.refresh()
 
     def do_print(self, event):
         if not self.result:
