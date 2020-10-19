@@ -177,6 +177,13 @@ g_value_small_evens = 2
 g_value_big_odds = 3
 g_value_big_evens = 4
 
+def Utf(s):
+    try:
+        if type(s) == unicode:
+            return s.encode('utf8', 'ignore')
+    except:
+        return str(s)
+
 class DBCore:
     """
     This is the core of the Double Ball program, which stores the main
@@ -247,7 +254,7 @@ class DBCore:
             return
         date = datetime.now()
         fname = "缩水结果-%s.txt" % date.strftime("%Y%m%d-%H%M%S")
-        output = open(unicode(fname, "utf-8"), "w")
+        output = open(Utf(fname), "w")
         output.write(self.result_str)
         output.close()
         self.out("缩水结果已保存到文件：'%s'" % fname)
@@ -694,7 +701,7 @@ class DBCore:
     def out(self, line, ret=True):
         if ret:
             line += "\n"
-        self.text_out.AppendText(unicode(line, "utf-8"))
+        self.text_out.AppendText(Utf(line))
 
     def clear(self):
         self.text_out.SetValue("")
