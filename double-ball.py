@@ -11,7 +11,7 @@ from itertools import combinations, permutations
 # - Fix using Chinese character (search FIXME)
 # - Rewrite some codes to use lambda.  Refers to g_rowcol_list impl
 
-g_version = "v1.0.4"
+g_version = "v1.0.5"
 g_changelog = """
 v0.5 (2019-04-08):
 - 添加“打印”和“更新日志”按键
@@ -66,6 +66,10 @@ v1.0.3 (2020-10-17):
 v1.0.4 (2020-10-17):
 - 重命名“四角空区”
 - 修复“六行列空行”的计算问题
+
+v1.0.5 (2020-10-19):
+- 使用改善的checkbox，windows下可以改变颜色（需要4.1.1+ wxpython）
+- 修复“六行列空行”中当选中被选数字17时候的计算错误
 """
 
 g_title = "双色球缩水工具 - %s" % g_version
@@ -94,6 +98,14 @@ g_color_disable = (0, 255, 0)
 # uncomment this to disable window resizing
 # g_style = wx.DEFAULT_FRAME_STYLE & ~(wx.RESIZE_BORDER | wx.MAXIMIZE_BOX)
 g_style = wx.DEFAULT_FRAME_STYLE
+
+g_has_custom_checkbox = False
+try:
+    import wx.lib.checkbox
+    if wx.lib.checkbox.GenCheckBox:
+        g_has_custom_checkbox = True
+except:
+    pass
 
 # M行列空N组
 g_rowcol_list = {
@@ -483,10 +495,10 @@ class DBCore:
     def count_rowcol_empty(self, x, n_list):
         model = g_rowcol_list[x]
         groups = model["groups"]
-        n = len(groups)
-        result = [0] * n
+        n_groups = len(groups)
+        result = [0] * n_groups
         for n in n_list:
-            for i in range(0, n):
+            for i in range(0, n_groups):
                 if n in groups[i]:
                     result[i] += 1
                     break
@@ -1028,7 +1040,10 @@ class DBPanel(wx.Panel):
         return new
 
     def new_checkbox(self, value):
-        new = wx.CheckBox(self, wx.ID_ANY, value, size=g_checkbox_size)
+        if g_has_custom_checkbox:
+            new = wx.lib.checkbox.GenCheckBox(self, wx.ID_ANY, value, size=g_checkbox_size)
+        else:
+            new = wx.CheckBox(self, wx.ID_ANY, value, size=g_checkbox_size)
         self.Bind(wx.EVT_CHECKBOX,
                   lambda event, x=new: self.core.do_update_checkbox(new),
                   new)
