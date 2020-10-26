@@ -10,7 +10,7 @@ from itertools import combinations, permutations
 # - Fix using Chinese character (search FIXME)
 # - Rewrite some codes to use lambda.  Refers to g_rowcol_list impl
 
-g_version = "v1.0.5"
+g_version = "v1.0.6"
 g_changelog = """
 v0.5 (2019-04-08):
 - 添加“打印”和“更新日志”按键
@@ -69,6 +69,9 @@ v1.0.4 (2020-10-17):
 v1.0.5 (2020-10-19):
 - 使用改善的checkbox，windows下可以改变颜色（需要4.1.1+ wxpython）
 - 修复“六行列空行”中当选中被选数字17时候的计算错误
+
+v1.0.6 (2020-10-25):
+- 修复升级平台软件后“胆码”和“上期结果”无法解析的问题
 """
 
 g_title = "双色球缩水工具 - %s" % g_version
@@ -846,19 +849,17 @@ class DBCore:
         else:
             # non-null last win value, we will be strict
             try:
-                s = s.decode("utf-8")
                 s = s.replace(",", " ")
                 s = s.replace(".", " ")
                 s = s.replace("-", " ")
                 s = s.replace(":", " ")
                 s = s.replace("\\", " ")
                 s = s.replace("/", " ")
-                # FIXME: these are still not working
-                s = s.replace("，".decode("utf-8"), " ")
-                s = s.replace("、".decode("utf-8"), " ")
-                s = s.replace("。".decode("utf-8"), " ")
+                s = s.replace("，", " ")
+                s = s.replace("。", " ")
+                s = s.replace("、", " ")
                 result = s.split()
-                result = map(int, result)
+                result = list(map(int, result))
                 # sanity check
                 for i in result:
                     if i > 33 or i <= 0:
