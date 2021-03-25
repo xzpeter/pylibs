@@ -255,6 +255,8 @@ kprobe_first_cpumask_contains(struct pt_regs *ctx, struct cpumask *mask,
         kprobe_common(ctx, msg_type);
     }
 }
+
+GENERATED_HOOKS
 """ % (MAX_N_CPUS, args.backtrace)
 
 # Allow quitting the tracing using Ctrl-C
@@ -339,11 +341,11 @@ def main():
         if not entry["enabled"]:
             continue
         hook_append(name, _type="kprobe", _sub_type=entry["subtype"])
-    full = body + hooks
+    body.replace("GENERATED_HOOKS", hooks)
     if args.debug:
-        print(full)
+        print(body)
         exit(0)
-    bpf = BPF(text=full)
+    bpf = BPF(text=body)
 
     for entry in hook_active_list:
         name = entry["name"]
