@@ -339,7 +339,7 @@ def print_event(cpu, data, size):
         # Skip for -EFAULT
         if stack_id != 0xfffffff2:
             for addr in stack_traces.walk(stack_id):
-                sym = bpf.ksym(addr, show_offset=True)
+                sym = bpf.ksym(addr, show_offset=True).decode("utf-8")
                 print("\t%s" % sym)
 
 def apply_cpu_list(bpf, cpu_list):
