@@ -37,6 +37,51 @@ import argparse
 import signal
 import ctypes
 import sys
+import os
+
+def err(out):
+    print("ERROR: " + out)
+    exit(-1)
+
+def parse_cpu_list(cpu_list):
+    out = []
+    def check_index(n):
+        if n >= MAX_N_CPUS:
+            err("CPU index overflow (%s>=%s)" % (n, MAX_N_CPUS))
+    subsets = cpu_list.split(",")
+    for subset in subsets:
+        if "-" in subset:
+            start, end = subset.split("-")
+            start = int(start)
+            end = int(end)
+            if start >= end:
+                err("Illegal range specified: %s-%s", (start, end))
+            check_index(end)
+            for i in range(int(start), int(end) + 1):
+                out.append(i)
+            continue
+        else:
+            cpu = int(subset)
+            check_index(cpu)
+            out.append(cpu)
+    return out
+
+def parse_args():
+    global cpu_list, args
+    parser = argparse.ArgumentParser(description='Trace tool for Real-Time workload.')
+    parser.add_argument("--cpu-list", "-c", required=True,
+                        help='Cores to trace interruptions (e.g., 1,2-5,8)')
+    parser.add_argument("--backtrace", "-b", action='store_true',
+                        help='Whether dump backtrace when possible (default: off)')
+    parser.add_argument("--debug", "-d", action='store_true',
+                        help='Whether run with debug mode (default: off)')
+    args = parser.parse_args()
+    try:
+        cpu_list = parse_cpu_list(args.cpu_list)
+    except:
+        err("Invalid cpu list: %s" % args.cpu_list)
+
+parse_args()
 
 #
 # To enable one tracepoint/kprobe, change "enabled" to True.
@@ -59,7 +104,6 @@ tracepoint_list = {
 #
 # These are the types of hooks:
 #
-
 # Trace anything happened on the local/specific core
 KPROBE_T_TRACE_LOCAL                = 0
 # Trace only if the core matches the first argument of the kprobe
@@ -120,50 +164,6 @@ args = None
 # Limit this because we use one u64 as cpumask.  Problem is BPF does not allow
 # loop, so any real cpumask won't work.
 MAX_N_CPUS = 64
-
-def err(out):
-    print("ERROR: " + out)
-    exit(-1)
-
-def parse_cpu_list(cpu_list):
-    out = []
-    def check_index(n):
-        if n >= MAX_N_CPUS:
-            err("CPU index overflow (%s>=%s)" % (n, MAX_N_CPUS))
-    subsets = cpu_list.split(",")
-    for subset in subsets:
-        if "-" in subset:
-            start, end = subset.split("-")
-            start = int(start)
-            end = int(end)
-            if start >= end:
-                err("Illegal range specified: %s-%s", (start, end))
-            check_index(end)
-            for i in range(int(start), int(end) + 1):
-                out.append(i)
-            continue
-        else:
-            cpu = int(subset)
-            check_index(cpu)
-            out.append(cpu)
-    return out
-
-def parse_args():
-    global cpu_list, args
-    parser = argparse.ArgumentParser(description='Trace tool for Real-Time workload.')
-    parser.add_argument("--cpu-list", "-c", required=True,
-                        help='Cores to trace interruptions (e.g., 1,2-5,8)')
-    parser.add_argument("--backtrace", "-b", action='store_true',
-                        help='Whether dump backtrace when possible (default: off)')
-    parser.add_argument("--debug", "-d", action='store_true',
-                        help='Whether run with debug mode (default: off)')
-    args = parser.parse_args()
-    try:
-        cpu_list = parse_cpu_list(args.cpu_list)
-    except:
-        err("Invalid cpu list: %s" % args.cpu_list)
-
-parse_args()
 
 # Main body of the BPF program
 body = """
