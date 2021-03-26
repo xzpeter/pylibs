@@ -39,7 +39,7 @@ import ctypes
 import sys
 import os
 
-VERSION = "0.1.0"
+VERSION = "0.1.1"
 
 # Limit this because we use one u64 as cpumask.  Problem is BPF does not allow
 # loop, so any real cpumask won't work.
