@@ -170,13 +170,14 @@ kprobe_list = {
         "enabled": True,
         "subtype": KPROBE_T_FIRST_INT_MATCH,
     },
-    "apic_timer_interrupt": {
-        "enabled": False,
-        "subtype": KPROBE_T_TRACE_LOCAL,
-        # smp_apic_timer_interrupt/__sysvec_apic_timer_interrupt
-        "kprobe": list(BPF.get_kprobe_functions(
-            b".*apic_timer_interrupt"))[0].decode()
-    }
+    # This does not work on some kernels; temporarily remove it.
+    # "apic_timer_interrupt": {
+    #     "enabled": False,
+    #     "subtype": KPROBE_T_TRACE_LOCAL,
+    #     # smp_apic_timer_interrupt/__sysvec_apic_timer_interrupt
+    #     "kprobe": list(BPF.get_kprobe_functions(
+    #         b".*apic_timer_interrupt"))[0].decode()
+    # }
 }
 
 # Main body of the BPF program
