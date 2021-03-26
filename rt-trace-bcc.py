@@ -39,6 +39,8 @@ import ctypes
 import sys
 import os
 
+VERSION = "0.1.0"
+
 def err(out):
     print("ERROR: " + out)
     exit(-1)
@@ -68,14 +70,24 @@ def parse_cpu_list(cpu_list):
 
 def parse_args():
     global cpu_list, args
-    parser = argparse.ArgumentParser(description='Trace tool for Real-Time workload.')
-    parser.add_argument("--cpu-list", "-c", required=True,
+    parser = argparse.ArgumentParser(
+        description='Bcc-based trace tool for Real-Time workload.')
+    parser.add_argument("--cpu-list", "-c",
                         help='Cores to trace interruptions (e.g., 1,2-5,8)')
     parser.add_argument("--backtrace", "-b", action='store_true',
                         help='Whether dump backtrace when possible (default: off)')
     parser.add_argument("--debug", "-d", action='store_true',
                         help='Whether run with debug mode (default: off)')
+    parser.add_argument("--version", "-v", action='store_true',
+                        help='Dump version information (current: %s)' % VERSION)
     args = parser.parse_args()
+    if args.version:
+        print("Version: %s" % VERSION)
+        exit(0)
+    if not args.cpu_list:
+        print("CPU list (--cpu-list/-c) is required.  " +
+              "Please use '-h' to dump the complete help message.")
+        exit(0)
     try:
         cpu_list = parse_cpu_list(args.cpu_list)
     except:
