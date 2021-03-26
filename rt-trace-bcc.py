@@ -41,6 +41,24 @@ import os
 
 VERSION = "0.1.0"
 
+# Limit this because we use one u64 as cpumask.  Problem is BPF does not allow
+# loop, so any real cpumask won't work.
+MAX_N_CPUS = 64
+
+#
+# Global vars
+#
+# To be generated, as part of BPF program
+hooks = ""
+# Keeps a list of hooks that are enabled
+hook_active_list = []
+# List of cpus to trace
+cpu_list = []
+# BPF program pointer, etc.
+bpf = None
+stack_traces = None
+args = None
+
 def err(out):
     print("ERROR: " + out)
     exit(-1)
@@ -88,6 +106,7 @@ def parse_args():
         print("CPU list (--cpu-list/-c) is required.  " +
               "Please use '-h' to dump the complete help message.")
         exit(0)
+    cpu_list = parse_cpu_list(args.cpu_list)
     try:
         cpu_list = parse_cpu_list(args.cpu_list)
     except:
@@ -159,23 +178,6 @@ kprobe_list = {
             b".*apic_timer_interrupt"))[0].decode()
     }
 }
-
-#
-# Global vars
-#
-# To be generated, as part of BPF program
-hooks = ""
-# Keeps a list of hooks that are enabled
-hook_active_list = []
-# List of cpus to trace
-cpu_list = []
-# BPF program pointer, etc.
-bpf = None
-stack_traces = None
-args = None
-# Limit this because we use one u64 as cpumask.  Problem is BPF does not allow
-# loop, so any real cpumask won't work.
-MAX_N_CPUS = 64
 
 # Main body of the BPF program
 body = """
