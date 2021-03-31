@@ -24,7 +24,7 @@
 #   - sys_exit_clock_nanosleep
 #
 # Hooks to observe when the target is within isolcpus list (kprobes):
-# - queue_work_on
+# - __queue_work, __queue_delayed_work (covers queue_work_on, etc.)
 # - smp_call_function
 # - smp_call_function_any
 # - smp_call_function_many_cond (covers on_each_cpu_cond_mask, smp_call_function_many)
@@ -149,7 +149,11 @@ KPROBE_T_FIRST_CPUMASK_CONTAINS     = 2
 # use that for attach_kprobe(), otherwise use the key as "kprobe".
 #
 dynamic_kprobe_list = {
-    "queue_work_on": {
+    "__queue_work": {
+        "enabled": True,
+        "subtype": KPROBE_T_FIRST_INT_MATCH,
+    },
+    "__queue_delayed_work": {
         "enabled": True,
         "subtype": KPROBE_T_FIRST_INT_MATCH,
     },
