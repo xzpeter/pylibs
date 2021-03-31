@@ -161,7 +161,8 @@ kprobe_list = {
         "subtype": KPROBE_T_TRACE_LOCAL,
     },
     "smp_call_function_many_cond": {
-        # Includes "smp_call_function_many", "on_each_cpu_cond_mask"
+        # Includes "on_each_cpu", "on_each_cpu_cond_mask",
+        # "smp_call_function_many", "on_each_cpu_cond_mask"
         "enabled": True,
         "subtype": KPROBE_T_FIRST_CPUMASK_CONTAINS,
     },
