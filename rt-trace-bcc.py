@@ -17,6 +17,7 @@
 # Hooks to observe on isolcpus:
 # - kprobes
 #   - smp_apic_timer_interrupt/__sysvec_apic_timer_interrupt
+#   - process_one_work, dump work item
 # - tracepoints
 #   - sched_switch
 #   - sys_enter_clock_nanosleep
@@ -39,7 +40,7 @@ import ctypes
 import sys
 import os
 
-VERSION = "0.1.1"
+VERSION = "0.1.2"
 
 # Limit this because we use one u64 as cpumask.  Problem is BPF does not allow
 # loop, so any real cpumask won't work.
@@ -147,7 +148,7 @@ KPROBE_T_FIRST_CPUMASK_CONTAINS     = 2
 # List of kprobes.  Type is defined as KPROBE_T_*.  When "kprobe" is defined,
 # use that for attach_kprobe(), otherwise use the key as "kprobe".
 #
-kprobe_list = {
+dynamic_kprobe_list = {
     "queue_work_on": {
         "enabled": True,
         "subtype": KPROBE_T_FIRST_INT_MATCH,
@@ -181,16 +182,30 @@ kprobe_list = {
     # }
 }
 
+def handle_process_one_work(name, event):
+    return "%s (func=%s)" % (name, bpf.ksym(event.arg1).decode('utf-8'))
+
+# These kprobes have custom hooks so they can dump more things
+static_kprobe_list = {
+    "process_one_work": {
+        "enabled": True,
+        "handler": handle_process_one_work,
+    }
+}
+
 # Main body of the BPF program
 body = """
 #include <linux/sched.h>
 #include <linux/cpumask.h>
+#include <linux/workqueue.h>
 
 struct data_t {
-    u64 ts;
-    char comm[TASK_COMM_LEN];
     u32 msg_type;
     u32 pid;
+    u64 ts;
+    // for MSG_TYPE_PROCESS_ONE_WORK, it's pointer to a work_func_t.
+    u64 arg1;
+    char comm[TASK_COMM_LEN];
     u32 cpu;
 #if BACKTRACE_ENABLED
     u32 stack_id;
@@ -207,22 +222,26 @@ BPF_ARRAY(trace_enabled, u64, 1);
 BPF_STACK_TRACE(stack_traces, 1024);
 #endif
 
+static inline void
+fill_data(struct data_t *data, u32 msg_type)
+{
+    data->msg_type = msg_type;
+    data->pid = bpf_get_current_pid_tgid();
+    data->ts = bpf_ktime_get_ns();
+    data->cpu = bpf_get_smp_processor_id();
+#if BACKTRACE_ENABLED
+    // stack_id can be -EFAULT (0xfffffff2) when not applicable
+    data->stack_id = stack_traces.get_stackid(ctx, 0);
+#endif
+    bpf_get_current_comm(data->comm, sizeof(data->comm));
+}
+
 // Base function to be called by all kinds of hooks
 static inline void
 kprobe_common(struct pt_regs *ctx, u32 msg_type)
 {
     struct data_t data = {};
-    u32 cpu = bpf_get_smp_processor_id();
-
-    data.msg_type = msg_type;
-    data.pid = bpf_get_current_pid_tgid();
-    data.ts = bpf_ktime_get_ns();
-    data.cpu = cpu;
-#if BACKTRACE_ENABLED
-    // stack_id can be -EFAULT (0xfffffff2) when not applicable
-    data.stack_id = stack_traces.get_stackid(ctx, 0);
-#endif
-    bpf_get_current_comm(&data.comm, sizeof(data.comm));
+    fill_data(&data, msg_type);
     events.perf_submit(ctx, &data, sizeof(data));
 }
 
@@ -233,19 +252,44 @@ static inline u64* get_cpu_list(void)
     return trace_enabled.lookup(&index);
 }
 
-// Submit message as long as the core has enabled tracing
-static inline void
-kprobe_trace_local(struct pt_regs *ctx, u32 msg_type)
+static inline bool cpu_in_trace_list(void)
 {
     int cpu = bpf_get_smp_processor_id();
     u64 *cpu_list = get_cpu_list();
 
     if (cpu >= MAX_N_CPUS || !cpu_list)
-        return;
+        return false;
 
     if ((1UL << cpu) & *cpu_list)
+        return true;
+
+    return false;
+}
+
+// Submit message as long as the core has enabled tracing
+static inline void
+kprobe_trace_local(struct pt_regs *ctx, u32 msg_type)
+{
+    if (cpu_in_trace_list())
         kprobe_common(ctx, msg_type);
 }
+
+#if ENABLE_PROCESS_ONE_WORK
+// constant hook on process_one_work
+int kprobe__process_one_work(struct pt_regs *regs, void *worker,
+                             struct work_struct *work)
+{
+    struct data_t data = {};
+
+    if (!cpu_in_trace_list())
+        return 0;
+
+    fill_data(&data, MSG_TYPE_PROCESS_ONE_WORK);
+    data.arg1 = (u64)work->func;
+    events.perf_submit(regs, &data, sizeof(data));
+    return 0;
+}
+#endif
 
 // Submit only if the specified cpu is in the tracing cpu list
 static inline void
@@ -331,9 +375,15 @@ def print_event(cpu, data, size):
 
     event = bpf["events"].event(data)
     time_s = (float(event.ts)) / 1000000000
-    name = hook_active_list[event.msg_type]["name"]
+    entry = hook_active_list[event.msg_type]
+    name = entry["name"]
+    if entry["type"] == "static_kprobe":
+        static_entry = static_kprobe_list[name]
+        msg = static_entry["handler"](name, event)
+    else:
+        msg = name
     print("%-18.9f %-20s %-4d %-8d %s" %
-          (time_s, event.comm.decode("utf-8"), event.cpu, event.pid, name))
+          (time_s, event.comm.decode("utf-8"), event.cpu, event.pid, msg))
 
     if args.backtrace:
         stack_id = event.stack_id
@@ -359,10 +409,23 @@ def main():
         if not entry["enabled"]:
             continue
         hook_append(name, _type="tp")
-    for name, entry in kprobe_list.items():
+    for name, entry in dynamic_kprobe_list.items():
         if not entry["enabled"]:
             continue
         hook_append(name, _type="kprobe", _sub_type=entry["subtype"])
+    for name, entry in static_kprobe_list.items():
+        index = len(hook_active_list)
+        enable = "ENABLE_" + name.upper()
+        msg_type = "MSG_TYPE_" + name.upper()
+        body = body.replace(enable, "%d" % entry["enabled"])
+        if not entry["enabled"]:
+            continue
+        body = body.replace(msg_type, "%d" % index)
+        hook_active_list.append({
+            "name": name,
+            "type": "static_kprobe",
+        })
+
     body = body.replace("GENERATED_HOOKS", hooks)
     body = body.replace("BACKTRACE_ENABLED", "1" if args.backtrace else "0")
     body = body.replace("MAX_N_CPUS", "%d" % MAX_N_CPUS)
@@ -378,7 +441,7 @@ def main():
             entry = tracepoint_list[name]
             bpf.attach_tracepoint(tp=entry["tracepoint"], fn_name=hook_name(name))
         elif t == "kprobe":
-            entry = kprobe_list[name]
+            entry = dynamic_kprobe_list[name]
             if "kprobe" in entry:
                 kprobe = entry["kprobe"]
             else:
@@ -390,7 +453,7 @@ def main():
         stack_traces = bpf.get_table("stack_traces")
     apply_cpu_list(bpf, cpu_list)
 
-    print("%-18s %-20s %-4s %-8s %s" % ("TIME(s)", "COMM", "CPU", "PID", "TYPE"))
+    print("%-18s %-20s %-4s %-8s %s" % ("TIME(s)", "COMM", "CPU", "PID", "MSG"))
     bpf["events"].open_perf_buffer(print_event)
     while 1:
         bpf.perf_buffer_poll()
