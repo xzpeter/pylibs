@@ -42,6 +42,7 @@ import argparse
 import platform
 import signal
 import ctypes
+import json
 import sys
 import os
 import re
@@ -67,6 +68,7 @@ bpf = None
 stack_traces = None
 args = None
 first_ts = 0
+results = {}
 
 # Detect RHEL8
 if re.match(".*\.el8\..*", platform.release()):
@@ -394,6 +396,9 @@ GENERATED_HOOKS
 
 # Allow quitting the tracing using Ctrl-C
 def int_handler(signum, frame):
+    global results
+    print("Dump summary of messages:\n")
+    print(json.dumps(results, indent=4))
     exit(0)
 signal.signal(signal.SIGINT, int_handler)
 
@@ -433,22 +438,32 @@ def print_event(cpu, data, size):
     entry = hook_active_list[event.msg_type]
     name = entry["name"]
     msg = name
+    comm = _d(event.comm)
     if entry["type"] == "static_kprobe":
         static_entry = static_kprobe_list[name]
         handler = static_entry["handler"]
         if handler:
             msg = handler(name, event)
     print("%-18.9f %-20s %-4d %-8d %s" %
-          (time_s, _d(event.comm), event.cpu, event.pid, msg))
+          (time_s, comm, event.cpu, event.pid, msg))
+
+    if msg not in results:
+        results[msg] = { "count": 1 }
+    else:
+        results[msg]["count"] += 1
 
     if args.backtrace:
         stack_id = event.stack_id
         # Skip for -EFAULT
         if stack_id != 0xfffffff2:
+            bt = []
             try:
                 for addr in stack_traces.walk(stack_id):
                     sym = _d(bpf.ksym(addr, show_offset=True))
                     print("\t%s" % sym)
+                    bt.append(sym)
+                if "backtrace" not in results[msg]:
+                    results[msg]["backtrace"] = bt
             except(e):
                 print("[detected error: %s]" % e)
 
