@@ -17,21 +17,26 @@
 # Hooks to observe on isolcpus:
 # - kprobes
 #   - smp_apic_timer_interrupt/__sysvec_apic_timer_interrupt
-#   - process_one_work, dump work item
+#   - process_one_work
 # - tracepoints
 #   - sched_switch
 #   - sys_enter_clock_nanosleep
 #   - sys_exit_clock_nanosleep
 #
 # Hooks to observe when the target is within isolcpus list (kprobes):
-# - __queue_work, __queue_delayed_work (covers queue_work_on, etc.)
-# - smp_call_function
+# - __queue_work, __queue_delayed_work (covers queue_work_on,
+#     queue_work_node, queue_delayed_work_on, etc.)
 # - smp_call_function_any
-# - smp_call_function_many_cond (covers on_each_cpu_cond_mask, smp_call_function_many)
-# - generic_exec_single (covers smp_call_function_single, smp_call_function_single_async)
+# - smp_call_function_many_cond (covers on_each_cpu_cond_mask,
+#     smp_call_function_many, smp_call_function)
+# - generic_exec_single (covers smp_call_function_single,
+#     smp_call_function_single_async, smp_call_function_any)
 #
 # TODO:
 # - Support MAX_N_CPUS to 256 cores, maybe?  Currently it's 64.
+# - Allow enable/disable hooks
+# - Don't use replace(), generate a define region and add into bpf code
+# - Allow specify any tracepoint, remove the tracepoint list
 
 from bcc import BPF
 import argparse
@@ -144,50 +149,10 @@ tracepoint_list = {
     },
 }
 
-#
-# These are the types of hooks:
-#
-# Trace anything happened on the local/specific core
-KPROBE_T_TRACE_LOCAL                = 0
-# Trace only if the core matches the first argument of the kprobe
-KPROBE_T_FIRST_INT_MATCH            = 1
-# Trace only if the first arg (which is a cpumask) contains the cpu specified
-# FIXME: current this is broken, try enable any of the hook with it
-KPROBE_T_FIRST_CPUMASK_CONTAINS     = 2
-
-#
-# List of kprobes.  Type is defined as KPROBE_T_*.  When "kprobe" is defined,
-# use that for attach_kprobe(), otherwise use the key as "kprobe".
-#
-dynamic_kprobe_list = {
-    "smp_call_function": {
-        "enabled": True,
-        "subtype": KPROBE_T_TRACE_LOCAL,
-    },
-    "smp_call_function_any": {
-        "enabled": True,
-        "subtype": KPROBE_T_TRACE_LOCAL,
-    },
-    "smp_call_function_many_cond": {
-        # Includes "on_each_cpu", "on_each_cpu_cond_mask",
-        # "smp_call_function_many", "on_each_cpu_cond_mask"
-        "enabled": True,
-        "subtype": KPROBE_T_FIRST_CPUMASK_CONTAINS,
-    },
-    # This does not work on some kernels; temporarily remove it.
-    # "apic_timer_interrupt": {
-    #     "enabled": False,
-    #     "subtype": KPROBE_T_TRACE_LOCAL,
-    #     # smp_apic_timer_interrupt/__sysvec_apic_timer_interrupt
-    #     "kprobe": list(BPF.get_kprobe_functions(
-    #         b".*apic_timer_interrupt"))[0].decode()
-    # }
-}
-
-def handle_process_one_work(name, event):
+def handle_func(name, event):
     return "%s (func=%s)" % (name, _d(bpf.ksym(event.args[0])))
 
-def handle_queue_work(name, event):
+def handle_target_func(name, event):
     return "%s (target=%d, func=%s)" % \
         (name, event.args[0], _d(bpf.ksym(event.args[1])))
 
@@ -197,25 +162,27 @@ def handle_queue_delayed_work(name, event):
 
 # These kprobes have custom hooks so they can dump more things
 static_kprobe_list = {
+    # TBD: track smp_apic_timer_interrupt/__sysvec_apic_timer_interrupt with:
+    # _d(list(BPF.get_kprobe_functions(b".*apic_timer_interrupt"))[0])
     "process_one_work": {
         "enabled": True,
-        "handler": handle_process_one_work,
+        "handler": handle_func,
     },
     "__queue_work": {
-        # Include "queue_work_on", "queue_work_node", etc.
         "enabled": True,
-        "handler": handle_queue_work,
+        "handler": handle_target_func,
     },
     "__queue_delayed_work": {
-        # Includes "queue_delayed_work_on", etc.
         "enabled": True,
         "handler": handle_queue_delayed_work,
     },
     "generic_exec_single": {
-        # Includes "smp_call_function_single", "smp_call_function_single_async"
         "enabled": True,
-        # Same as queue_work layout
-        "handler": handle_queue_work,
+        "handler": handle_target_func,
+    },
+    "smp_call_function_many_cond": {
+        "enabled": True,
+        "handler": handle_func,
     },
 }
 
@@ -304,18 +271,18 @@ kprobe_trace_local(struct pt_regs *ctx, u32 msg_type)
         kprobe_common(ctx, msg_type);
 }
 
-// Submit only if any specified cpu is in the cpumask
-static inline void
-kprobe_first_cpumask_contains(struct pt_regs *ctx, struct cpumask *mask,
-                              u32 msg_type)
+static inline bool
+cpumask_contains_target(struct cpumask *mask)
 {
     u64 *cpu_list = get_cpu_list(), *ptr = (u64 *)mask;
 
     if (!cpu_list || !ptr)
-        return;
+        return false;
 
     if (*cpu_list & *ptr)
-        kprobe_common(ctx, msg_type);
+        return true;
+
+    return false;
 }
 
 /*-------------------------------*
@@ -402,6 +369,22 @@ int kprobe__generic_exec_single(struct pt_regs *regs, int cpu,
 }
 #endif
 
+#if ENABLE_SMP_CALL_FUNCTION_MANY_COND
+int kprobe__smp_call_function_many_cond(struct pt_regs *regs,
+    struct cpumask *mask, void *func)
+{
+    struct data_t data = {};
+
+    if (!cpumask_contains_target(mask))
+        return 0;
+
+    fill_data(regs, &data, MSG_TYPE_SMP_CALL_FUNCTION_MANY_COND);
+    data.args[0] = (u64)func;
+    events.perf_submit(regs, &data, sizeof(data));
+    return 0;
+}
+#endif
+
 GENERATED_HOOKS
 """
 
@@ -414,35 +397,24 @@ def hook_name(name):
     """Return function name of a hook point to attach"""
     return "func____" + name
 
-def hook_append(name, _type, _sub_type=KPROBE_T_TRACE_LOCAL):
+def tp_append(name, _type):
     """Enable a hook with type, by appending the BPF program.  When `_type'
     is 'kprobe', need to provide subtype."""
     global hooks, hook_active_list
     # Fetch the next index to use
     index = len(hook_active_list)
-    if _type == "tp" or _sub_type == KPROBE_T_TRACE_LOCAL:
-        # For either tracepoints or trace-local kprobes, trace all thing
-        # happened on specific cores
-        hooks += """
+    # For either tracepoints or trace-local kprobes, trace all thing
+    # happened on specific cores
+    hooks += """
 int %s(struct pt_regs *ctx)
 {
     kprobe_trace_local(ctx, %d);
     return 0;
 }
 """ % (hook_name(name), index)
-    elif _sub_type == KPROBE_T_FIRST_CPUMASK_CONTAINS:
-        hooks += """
-int %s(struct pt_regs *ctx, struct cpumask *mask)
-{
-    kprobe_first_cpumask_contains(ctx, mask, %d);
-    return 0;
-}
-""" % (hook_name(name), index)
-    else:
-        err("Unknown type")
     # Create mapping in hook_active_list
     hook_active_list.append({
-        "type": _type,
+        "type": "tp",
         "name": name,
     })
 
@@ -488,11 +460,7 @@ def main():
     for name, entry in tracepoint_list.items():
         if not entry["enabled"]:
             continue
-        hook_append(name, _type="tp")
-    for name, entry in dynamic_kprobe_list.items():
-        if not entry["enabled"]:
-            continue
-        hook_append(name, _type="kprobe", _sub_type=entry["subtype"])
+        tp_append(name)
     for name, entry in static_kprobe_list.items():
         index = len(hook_active_list)
         enable = "ENABLE_" + name.upper()
@@ -521,13 +489,6 @@ def main():
         if t == "tp":
             entry = tracepoint_list[name]
             bpf.attach_tracepoint(tp=entry["tracepoint"], fn_name=hook_name(name))
-        elif t == "kprobe":
-            entry = dynamic_kprobe_list[name]
-            if "kprobe" in entry:
-                kprobe = entry["kprobe"]
-            else:
-                kprobe = name
-            bpf.attach_kprobe(event=kprobe, fn_name=hook_name(name))
         print("Enabled hook point: %s" % name)
 
     if args.backtrace:
