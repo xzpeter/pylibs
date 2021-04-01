@@ -35,7 +35,6 @@
 # TODO:
 # - Support MAX_N_CPUS to 256 cores, maybe?  Currently it's 64.
 # - Allow enable/disable hooks
-# - Don't use replace(), generate a define region and add into bpf code
 # - Allow specify any tracepoint, remove the tracepoint list
 
 from bcc import BPF
@@ -58,6 +57,7 @@ MAX_N_CPUS = 64
 #
 # To be generated, as part of BPF program
 hooks = ""
+defines = ""
 # Keeps a list of hooks that are enabled
 hook_active_list = []
 # List of cpus to trace
@@ -192,6 +192,9 @@ body = """
 #include <linux/cpumask.h>
 #include <linux/workqueue.h>
 #include <linux/smp.h>
+
+// Global definitions generated
+GENERATED_DEFINES
 
 struct data_t {
     u32 msg_type;
@@ -453,6 +456,10 @@ def apply_cpu_list(bpf, cpu_list):
         out |= 1 << cpu
     cpu_array[0] = ctypes.c_uint64(out)
 
+def define_add(name, var):
+    global defines
+    defines += "%-10s%-50s%d\n" % ("#define", name, var)
+
 def main():
     global bpf, stack_traces, cpu_list, body
 
@@ -465,19 +472,21 @@ def main():
         index = len(hook_active_list)
         enable = "ENABLE_" + name.upper()
         msg_type = "MSG_TYPE_" + name.upper()
-        body = body.replace(enable, "%d" % entry["enabled"])
+        define_add(enable, entry["enabled"])
         if not entry["enabled"]:
             continue
-        body = body.replace(msg_type, "%d" % index)
+        define_add(msg_type, index)
         hook_active_list.append({
             "name": name,
             "type": "static_kprobe",
         })
 
-    body = body.replace("OS_VERSION_RHEL8", "1" if os_version == "rhel8" else "0")
+    define_add("OS_VERSION_RHEL8", os_version == "rhel8")
+    define_add("BACKTRACE_ENABLED", args.backtrace)
+    define_add("MAX_N_CPUS", MAX_N_CPUS)
+
     body = body.replace("GENERATED_HOOKS", hooks)
-    body = body.replace("BACKTRACE_ENABLED", "1" if args.backtrace else "0")
-    body = body.replace("MAX_N_CPUS", "%d" % MAX_N_CPUS)
+    body = body.replace("GENERATED_DEFINES", defines)
     if args.debug:
         print(body)
         exit(0)
