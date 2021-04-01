@@ -118,7 +118,13 @@ def parse_args():
                         help='Whether run with debug mode (default: off)')
     parser.add_argument("--version", "-v", action='store_true',
                         help='Dump version information (current: %s)' % VERSION)
+    parser.add_argument("--summary", "-s", action='store_true',
+                        help='Dump summary when stop/SIGINT (default: off)')
+    parser.add_argument("--quiet", "-q", action='store_true',
+                        help='Quiet mode; only dump summary (implies "-s" too)')
     args = parser.parse_args()
+    if args.quiet:
+        args.summary = True
     if args.version:
         print("Version: %s" % VERSION)
         exit(0)
@@ -396,9 +402,10 @@ GENERATED_HOOKS
 
 # Allow quitting the tracing using Ctrl-C
 def int_handler(signum, frame):
-    global results
-    print("Dump summary of messages:\n")
-    print(json.dumps(results, indent=4))
+    global results, args
+    if args.summary:
+        print("Dump summary of messages:\n")
+        print(json.dumps(results, indent=4))
     exit(0)
 signal.signal(signal.SIGINT, int_handler)
 
@@ -444,8 +451,9 @@ def print_event(cpu, data, size):
         handler = static_entry["handler"]
         if handler:
             msg = handler(name, event)
-    print("%-18.9f %-20s %-4d %-8d %s" %
-          (time_s, comm, event.cpu, event.pid, msg))
+    if not args.quiet:
+        print("%-18.9f %-20s %-4d %-8d %s" %
+            (time_s, comm, event.cpu, event.pid, msg))
 
     if msg not in results:
         results[msg] = { "count": 1 }
@@ -460,12 +468,14 @@ def print_event(cpu, data, size):
             try:
                 for addr in stack_traces.walk(stack_id):
                     sym = _d(bpf.ksym(addr, show_offset=True))
-                    print("\t%s" % sym)
+                    if not args.quiet:
+                        print("\t%s" % sym)
                     bt.append(sym)
                 if "backtrace" not in results[msg]:
                     results[msg]["backtrace"] = bt
             except(e):
-                print("[detected error: %s]" % e)
+                if not args.quiet:
+                    print("[detected error: %s]" % e)
 
 def apply_cpu_list(bpf, cpu_list):
     """Apply the cpu_list to BPF program"""
@@ -523,7 +533,10 @@ def main():
         stack_traces = bpf.get_table("stack_traces")
     apply_cpu_list(bpf, cpu_list)
 
-    print("%-18s %-20s %-4s %-8s %s" % ("TIME(s)", "COMM", "CPU", "PID", "MSG"))
+    if not args.quiet:
+        print("%-18s %-20s %-4s %-8s %s" % ("TIME(s)", "COMM", "CPU", "PID", "MSG"))
+    else:
+        print("Press Ctrl-C to show results..")
     bpf["events"].open_perf_buffer(print_event)
     while 1:
         bpf.perf_buffer_poll()
