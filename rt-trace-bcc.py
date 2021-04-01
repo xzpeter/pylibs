@@ -66,6 +66,7 @@ cpu_list = []
 bpf = None
 stack_traces = None
 args = None
+first_ts = 0
 
 # Detect RHEL8
 if re.match(".*\.el8\..*", platform.release()):
@@ -422,10 +423,13 @@ int %s(struct pt_regs *ctx)
     })
 
 def print_event(cpu, data, size):
-    global bpf, stack_traces, args
+    global bpf, stack_traces, args, first_ts
 
     event = bpf["events"].event(data)
     time_s = (float(event.ts)) / 1000000000
+    if not first_ts:
+        first_ts = time_s
+    time_s -= first_ts
     entry = hook_active_list[event.msg_type]
     name = entry["name"]
     msg = name
