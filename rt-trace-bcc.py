@@ -35,10 +35,12 @@
 
 from bcc import BPF
 import argparse
+import platform
 import signal
 import ctypes
 import sys
 import os
+import re
 
 VERSION = "0.1.2"
 
@@ -60,9 +62,18 @@ bpf = None
 stack_traces = None
 args = None
 
+# Detect RHEL8
+if re.match(".*\.el8\..*", platform.release()):
+    os_version = "rhel8"
+else:
+    os_version = "upstream"
+
 def err(out):
     print("ERROR: " + out)
     exit(-1)
+
+def _d(s):
+    return s.decode("utf-8")
 
 def parse_cpu_list(cpu_list):
     out = []
@@ -149,14 +160,6 @@ KPROBE_T_FIRST_CPUMASK_CONTAINS     = 2
 # use that for attach_kprobe(), otherwise use the key as "kprobe".
 #
 dynamic_kprobe_list = {
-    "__queue_work": {
-        "enabled": True,
-        "subtype": KPROBE_T_FIRST_INT_MATCH,
-    },
-    "__queue_delayed_work": {
-        "enabled": True,
-        "subtype": KPROBE_T_FIRST_INT_MATCH,
-    },
     "smp_call_function": {
         "enabled": True,
         "subtype": KPROBE_T_TRACE_LOCAL,
@@ -171,11 +174,6 @@ dynamic_kprobe_list = {
         "enabled": True,
         "subtype": KPROBE_T_FIRST_CPUMASK_CONTAINS,
     },
-    "generic_exec_single": {
-        # Includes "smp_call_function_single", "smp_call_function_single_async"
-        "enabled": True,
-        "subtype": KPROBE_T_FIRST_INT_MATCH,
-    },
     # This does not work on some kernels; temporarily remove it.
     # "apic_timer_interrupt": {
     #     "enabled": False,
@@ -187,14 +185,38 @@ dynamic_kprobe_list = {
 }
 
 def handle_process_one_work(name, event):
-    return "%s (func=%s)" % (name, bpf.ksym(event.arg1).decode('utf-8'))
+    return "%s (func=%s)" % (name, _d(bpf.ksym(event.args[0])))
+
+def handle_queue_work(name, event):
+    return "%s (target=%d, func=%s)" % \
+        (name, event.args[0], _d(bpf.ksym(event.args[1])))
+
+def handle_queue_delayed_work(name, event):
+    return "%s (target=%d, func=%s, delay=%d)" % \
+        (name, event.args[0], _d(bpf.ksym(event.args[1])), event.args[2])
 
 # These kprobes have custom hooks so they can dump more things
 static_kprobe_list = {
     "process_one_work": {
         "enabled": True,
         "handler": handle_process_one_work,
-    }
+    },
+    "__queue_work": {
+        # Include "queue_work_on", "queue_work_node", etc.
+        "enabled": True,
+        "handler": handle_queue_work,
+    },
+    "__queue_delayed_work": {
+        # Includes "queue_delayed_work_on", etc.
+        "enabled": True,
+        "handler": handle_queue_delayed_work,
+    },
+    "generic_exec_single": {
+        # Includes "smp_call_function_single", "smp_call_function_single_async"
+        "enabled": True,
+        # Same as queue_work layout
+        "handler": handle_queue_work,
+    },
 }
 
 # Main body of the BPF program
@@ -202,13 +224,13 @@ body = """
 #include <linux/sched.h>
 #include <linux/cpumask.h>
 #include <linux/workqueue.h>
+#include <linux/smp.h>
 
 struct data_t {
     u32 msg_type;
     u32 pid;
     u64 ts;
-    // for MSG_TYPE_PROCESS_ONE_WORK, it's pointer to a work_func_t.
-    u64 arg1;
+    u64 args[4];
     char comm[TASK_COMM_LEN];
     u32 cpu;
 #if BACKTRACE_ENABLED
@@ -227,7 +249,7 @@ BPF_STACK_TRACE(stack_traces, 1024);
 #endif
 
 static inline void
-fill_data(struct data_t *data, u32 msg_type)
+fill_data(struct pt_regs *regs, struct data_t *data, u32 msg_type)
 {
     data->msg_type = msg_type;
     data->pid = bpf_get_current_pid_tgid();
@@ -235,7 +257,7 @@ fill_data(struct data_t *data, u32 msg_type)
     data->cpu = bpf_get_smp_processor_id();
 #if BACKTRACE_ENABLED
     // stack_id can be -EFAULT (0xfffffff2) when not applicable
-    data->stack_id = stack_traces.get_stackid(ctx, 0);
+    data->stack_id = stack_traces.get_stackid(regs, 0);
 #endif
     bpf_get_current_comm(data->comm, sizeof(data->comm));
 }
@@ -245,7 +267,7 @@ static inline void
 kprobe_common(struct pt_regs *ctx, u32 msg_type)
 {
     struct data_t data = {};
-    fill_data(&data, msg_type);
+    fill_data(ctx, &data, msg_type);
     events.perf_submit(ctx, &data, sizeof(data));
 }
 
@@ -256,9 +278,8 @@ static inline u64* get_cpu_list(void)
     return trace_enabled.lookup(&index);
 }
 
-static inline bool cpu_in_trace_list(void)
+static inline bool cpu_in_list(int cpu)
 {
-    int cpu = bpf_get_smp_processor_id();
     u64 *cpu_list = get_cpu_list();
 
     if (cpu >= MAX_N_CPUS || !cpu_list)
@@ -270,41 +291,16 @@ static inline bool cpu_in_trace_list(void)
     return false;
 }
 
+static inline bool current_cpu_in_list(void)
+{
+    return cpu_in_list(bpf_get_smp_processor_id());
+}
+
 // Submit message as long as the core has enabled tracing
 static inline void
 kprobe_trace_local(struct pt_regs *ctx, u32 msg_type)
 {
-    if (cpu_in_trace_list())
-        kprobe_common(ctx, msg_type);
-}
-
-#if ENABLE_PROCESS_ONE_WORK
-// constant hook on process_one_work
-int kprobe__process_one_work(struct pt_regs *regs, void *worker,
-                             struct work_struct *work)
-{
-    struct data_t data = {};
-
-    if (!cpu_in_trace_list())
-        return 0;
-
-    fill_data(&data, MSG_TYPE_PROCESS_ONE_WORK);
-    data.arg1 = (u64)work->func;
-    events.perf_submit(regs, &data, sizeof(data));
-    return 0;
-}
-#endif
-
-// Submit only if the specified cpu is in the tracing cpu list
-static inline void
-kprobe_first_arg_match(struct pt_regs *ctx, int cpu, u32 msg_type)
-{
-    u64 *cpu_list = get_cpu_list();
-    
-    if (cpu >= MAX_N_CPUS || !cpu_list)
-        return;
-
-    if ((1UL << cpu) & *cpu_list)
+    if (current_cpu_in_list())
         kprobe_common(ctx, msg_type);
 }
 
@@ -321,6 +317,90 @@ kprobe_first_cpumask_contains(struct pt_regs *ctx, struct cpumask *mask,
     if (*cpu_list & *ptr)
         kprobe_common(ctx, msg_type);
 }
+
+/*-------------------------------*
+ |                               |
+ | Below are static kprobe hooks |
+ |                               |
+ *-------------------------------*/
+
+#if ENABLE_PROCESS_ONE_WORK
+int kprobe__process_one_work(struct pt_regs *regs, void *unused,
+                             struct work_struct *work)
+{
+    struct data_t data = {};
+
+    if (!current_cpu_in_list())
+        return 0;
+
+    fill_data(regs, &data, MSG_TYPE_PROCESS_ONE_WORK);
+    data.args[0] = (u64)work->func;
+    events.perf_submit(regs, &data, sizeof(data));
+    return 0;
+}
+#endif
+
+#if ENABLE___QUEUE_WORK
+int kprobe____queue_work(struct pt_regs *regs, int cpu, void *unused,
+                         struct work_struct *work)
+{
+    struct data_t data = {};
+
+    if (!cpu_in_list(cpu))
+        return 0;
+
+    fill_data(regs, &data, MSG_TYPE___QUEUE_WORK);
+    data.args[0] = (u64)cpu;
+    data.args[1] = (u64)work->func;
+    events.perf_submit(regs, &data, sizeof(data));
+    return 0;
+}
+#endif
+
+#if ENABLE___QUEUE_DELAYED_WORK
+int kprobe____queue_delayed_work(struct pt_regs *regs, int cpu,
+                                 void *unused, struct delayed_work *work,
+                                 unsigned long delay)
+{
+    struct data_t data = {};
+
+    if (!cpu_in_list(cpu))
+        return 0;
+
+    fill_data(regs, &data, MSG_TYPE___QUEUE_DELAYED_WORK);
+    data.args[0] = (u64)cpu;
+    data.args[1] = (u64)work->work.func;
+    data.args[2] = (u64)delay;
+    events.perf_submit(regs, &data, sizeof(data));
+    return 0;
+}
+#endif
+
+#if ENABLE_GENERIC_EXEC_SINGLE
+#if OS_VERSION_RHEL8
+int kprobe__generic_exec_single(struct pt_regs *regs, int cpu,
+    void *unused, void *func)
+#else
+int kprobe__generic_exec_single(struct pt_regs *regs, int cpu,
+    call_single_data_t *csd)
+#endif
+{
+    struct data_t data = {};
+
+    if (!cpu_in_list(cpu))
+        return 0;
+
+    fill_data(regs, &data, MSG_TYPE_GENERIC_EXEC_SINGLE);
+    data.args[0] = (u64)cpu;
+#if OS_VERSION_RHEL8
+    data.args[1] = (u64)func;
+#else
+    data.args[1] = (u64)csd->func;
+#endif
+    events.perf_submit(regs, &data, sizeof(data));
+    return 0;
+}
+#endif
 
 GENERATED_HOOKS
 """
@@ -350,14 +430,6 @@ int %s(struct pt_regs *ctx)
     return 0;
 }
 """ % (hook_name(name), index)
-    elif _sub_type == KPROBE_T_FIRST_INT_MATCH:
-        hooks += """
-int %s(struct pt_regs *ctx, int cpu)
-{
-    kprobe_first_arg_match(ctx, cpu, %d);
-    return 0;
-}
-""" % (hook_name(name), index)
     elif _sub_type == KPROBE_T_FIRST_CPUMASK_CONTAINS:
         hooks += """
 int %s(struct pt_regs *ctx, struct cpumask *mask)
@@ -381,21 +453,25 @@ def print_event(cpu, data, size):
     time_s = (float(event.ts)) / 1000000000
     entry = hook_active_list[event.msg_type]
     name = entry["name"]
+    msg = name
     if entry["type"] == "static_kprobe":
         static_entry = static_kprobe_list[name]
-        msg = static_entry["handler"](name, event)
-    else:
-        msg = name
+        handler = static_entry["handler"]
+        if handler:
+            msg = handler(name, event)
     print("%-18.9f %-20s %-4d %-8d %s" %
-          (time_s, event.comm.decode("utf-8"), event.cpu, event.pid, msg))
+          (time_s, _d(event.comm), event.cpu, event.pid, msg))
 
     if args.backtrace:
         stack_id = event.stack_id
         # Skip for -EFAULT
         if stack_id != 0xfffffff2:
-            for addr in stack_traces.walk(stack_id):
-                sym = bpf.ksym(addr, show_offset=True).decode("utf-8")
-                print("\t%s" % sym)
+            try:
+                for addr in stack_traces.walk(stack_id):
+                    sym = _d(bpf.ksym(addr, show_offset=True))
+                    print("\t%s" % sym)
+            except(e):
+                print("[detected error: %s]" % e)
 
 def apply_cpu_list(bpf, cpu_list):
     """Apply the cpu_list to BPF program"""
@@ -430,6 +506,7 @@ def main():
             "type": "static_kprobe",
         })
 
+    body = body.replace("OS_VERSION_RHEL8", "1" if os_version == "rhel8" else "0")
     body = body.replace("GENERATED_HOOKS", hooks)
     body = body.replace("BACKTRACE_ENABLED", "1" if args.backtrace else "0")
     body = body.replace("MAX_N_CPUS", "%d" % MAX_N_CPUS)
