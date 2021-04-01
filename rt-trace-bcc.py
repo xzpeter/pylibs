@@ -69,6 +69,10 @@ stack_traces = None
 args = None
 first_ts = 0
 results = {}
+# When in start phase, mask out all the messages coming from current process,
+# since bcc will trigger quite a few hooks below
+start_phase = True
+cur_pid = os.getpid()
 
 # Detect RHEL8
 if re.match(".*\.el8\..*", platform.release()):
@@ -435,7 +439,7 @@ int %s(struct pt_regs *ctx)
     })
 
 def print_event(cpu, data, size):
-    global bpf, stack_traces, args, first_ts
+    global bpf, stack_traces, args, first_ts, start_phase, cur_pid
 
     event = bpf["events"].event(data)
     time_s = (float(event.ts)) / 1000000000
@@ -446,6 +450,15 @@ def print_event(cpu, data, size):
     name = entry["name"]
     msg = name
     comm = _d(event.comm)
+
+    if start_phase and cur_pid == event.pid:
+        # We're duing starting phase and got an event triggered from ourselves,
+        # in most case we don't care about these messages. Drop them.
+        return
+
+    # Whenever we received a real event, we start recording
+    start_phase = False
+
     if entry["type"] == "static_kprobe":
         static_entry = static_kprobe_list[name]
         handler = static_entry["handler"]
