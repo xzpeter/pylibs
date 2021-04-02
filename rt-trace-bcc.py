@@ -412,6 +412,7 @@ def int_handler(signum, frame):
         print(json.dumps(results, indent=4))
     exit(0)
 signal.signal(signal.SIGINT, int_handler)
+signal.signal(signal.SIGTERM, int_handler)
 
 def hook_name(name):
     """Return function name of a hook point to attach"""
