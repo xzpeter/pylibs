@@ -18,6 +18,7 @@
 # - kprobes
 #   - smp_apic_timer_interrupt/__sysvec_apic_timer_interrupt
 #   - process_one_work
+#   - irq_work_queue
 # - tracepoints
 #   - sched_switch
 #   - sys_enter_clock_nanosleep
@@ -31,11 +32,14 @@
 #     smp_call_function_many, smp_call_function)
 # - generic_exec_single (covers smp_call_function_single,
 #     smp_call_function_single_async, smp_call_function_any)
+# - irq_work_queue_on
 #
 # TODO:
 # - Support MAX_N_CPUS to 256 cores, maybe?  Currently it's 64.
 # - Allow enable/disable hooks
 # - Allow specify any tracepoint, remove the tracepoint list
+# - Allow capture ftrace_printk() (e.g., cyclictest message dumped to
+#   ftrace buffer when threshold reached)
 
 from bcc import BPF
 import argparse
@@ -197,6 +201,16 @@ static_kprobe_list = {
         "enabled": True,
         "handler": handle_func,
     },
+    "irq_work_queue": {
+        # FIXME: Only enable this on RHEL8 for now, since for some reason
+        # upstream will fail the attach.  Same to below irq_work hooks.
+        "enabled": True if os_version == "rhel8" else False,
+        "handler": handle_func,
+    },
+    "irq_work_queue_on": {
+        "enabled": True if os_version == "rhel8" else False,
+        "handler": handle_target_func,
+    },
 }
 
 # Main body of the BPF program
@@ -205,6 +219,8 @@ body = """
 #include <linux/cpumask.h>
 #include <linux/workqueue.h>
 #include <linux/smp.h>
+#include <linux/irq_work.h>
+#include <linux/llist.h>
 
 // Global definitions generated
 GENERATED_DEFINES
@@ -401,6 +417,38 @@ int kprobe__smp_call_function_many_cond(struct pt_regs *regs,
 }
 #endif
 
+#if ENABLE_IRQ_WORK_QUEUE
+int kprobe__irq_work_queue(struct pt_regs *regs, struct irq_work *work)
+{
+    struct data_t data = {};
+
+    if (!current_cpu_in_list())
+        return 0;
+
+    fill_data(regs, &data, MSG_TYPE_IRQ_WORK_QUEUE);
+    data.args[0] = (u64)work->func;
+    events.perf_submit(regs, &data, sizeof(data));
+    return 0;
+}
+#endif
+
+#if ENABLE_IRQ_WORK_QUEUE_ON
+int kprobe__irq_work_queue_on(struct pt_regs *regs, struct irq_work *work,
+                              int cpu)
+{
+    struct data_t data = {};
+
+    if (!cpu_in_list(cpu))
+        return 0;
+
+    fill_data(regs, &data, MSG_TYPE_IRQ_WORK_QUEUE_ON);
+    data.args[0] = (u64)cpu;
+    data.args[1] = (u64)work->func;
+    events.perf_submit(regs, &data, sizeof(data));
+    return 0;
+}
+#endif
+
 GENERATED_HOOKS
 """
 
@@ -464,6 +512,7 @@ def print_event(cpu, data, size):
         static_entry = static_kprobe_list[name]
         handler = static_entry["handler"]
         if handler:
+            # Overwrite msg with the handler output
             msg = handler(name, event)
     if not args.quiet:
         print("%-18.9f %-20s %-4d %-8d %s" %
