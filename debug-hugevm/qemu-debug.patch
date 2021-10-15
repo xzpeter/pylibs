@@ -1,0 +1,41 @@
+From aaebcc22addaf59a7c7645bc2bfcb5d9c4cb4059 Mon Sep 17 00:00:00 2001
+From: Peter Xu <peterx@redhat.com>
+Date: Fri, 15 Oct 2021 13:16:55 +0800
+Subject: [PATCH] DEBUG: this will let migration never complete
+
+Signed-off-by: Peter Xu <peterx@redhat.com>
+---
+ migration/migration.c | 3 ++-
+ migration/ram.c       | 2 +-
+ 2 files changed, 3 insertions(+), 2 deletions(-)
+
+diff --git a/migration/migration.c b/migration/migration.c
+index 6ac807ef3d..786c5256e9 100644
+--- a/migration/migration.c
++++ b/migration/migration.c
+@@ -3552,7 +3552,8 @@ static MigIterateState migration_iteration_run(MigrationState *s)
+     trace_migrate_pending(pending_size, s->threshold_size,
+                           pend_pre, pend_compat, pend_post);
+ 
+-    if (pending_size && pending_size >= s->threshold_size) {
++    /* if (pending_size && pending_size >= s->threshold_size) { */
++    if (1) {
+         /* Still a significant amount to transfer */
+         if (!in_postcopy && pend_pre <= s->threshold_size &&
+             qatomic_read(&s->start_postcopy)) {
+diff --git a/migration/ram.c b/migration/ram.c
+index 24d121d801..b840c20893 100644
+--- a/migration/ram.c
++++ b/migration/ram.c
+@@ -3034,7 +3034,7 @@ static void ram_save_pending(QEMUFile *f, void *opaque, uint64_t max_size,
+     remaining_size = rs->migration_dirty_pages * TARGET_PAGE_SIZE;
+ 
+     if (!migration_in_postcopy() &&
+-        remaining_size < max_size) {
++        remaining_size <= max_size) {
+         qemu_mutex_lock_iothread();
+         WITH_RCU_READ_LOCK_GUARD() {
+             migration_bitmap_sync_precopy(rs);
+-- 
+2.31.1
+

@@ -1,0 +1,1015 @@
+134603@1634279142.581115:migration_bitmap_sync_start
+134603@1634279142.582562:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.583351:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.584688:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.585955:migration_bitmap_sync_end dirty_pages 0
+134603@1634279142.586747:migration_bitmap_sync_start
+134603@1634279142.588302:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.589096:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.590455:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.591627:migration_bitmap_sync_end dirty_pages 0
+134603@1634279142.592150:migration_bitmap_sync_start
+134603@1634279142.593480:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.594258:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.595581:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.596748:migration_bitmap_sync_end dirty_pages 0
+134603@1634279142.597578:migration_bitmap_sync_start
+134603@1634279142.598977:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.599788:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.601150:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.602356:migration_bitmap_sync_end dirty_pages 0
+134603@1634279142.603100:migration_bitmap_sync_start
+134603@1634279142.604802:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.605651:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.607066:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.608238:migration_bitmap_sync_end dirty_pages 21
+134603@1634279142.609724:migration_bitmap_sync_start
+134603@1634279142.611072:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.611847:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.613193:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.614365:migration_bitmap_sync_end dirty_pages 116
+134603@1634279142.619065:migration_bitmap_sync_start
+134603@1634279142.620614:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.621405:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.622762:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.623982:migration_bitmap_sync_end dirty_pages 153
+134603@1634279142.627870:migration_bitmap_sync_start
+134603@1634279142.629191:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.629967:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.631299:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.632511:migration_bitmap_sync_end dirty_pages 153
+134603@1634279142.633239:migration_bitmap_sync_start
+134603@1634279142.634608:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.635390:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.637013:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.638199:migration_bitmap_sync_end dirty_pages 153
+134603@1634279142.638798:migration_bitmap_sync_start
+134603@1634279142.640205:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.641011:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.642381:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.643577:migration_bitmap_sync_end dirty_pages 153
+134603@1634279142.644124:migration_bitmap_sync_start
+134603@1634279142.645449:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.646251:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.647584:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.648778:migration_bitmap_sync_end dirty_pages 153
+134603@1634279142.649560:migration_bitmap_sync_start
+134603@1634279142.650914:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.651720:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.653151:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.654376:migration_bitmap_sync_end dirty_pages 153
+134603@1634279142.654941:migration_bitmap_sync_start
+134603@1634279142.656286:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.657096:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.658526:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.659720:migration_bitmap_sync_end dirty_pages 153
+134603@1634279142.660267:migration_bitmap_sync_start
+134603@1634279142.661596:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.662397:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.663770:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.664975:migration_bitmap_sync_end dirty_pages 233
+134603@1634279142.669584:migration_bitmap_sync_start
+134603@1634279142.671315:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.672144:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.673508:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.674698:migration_bitmap_sync_end dirty_pages 233
+134603@1634279142.675472:migration_bitmap_sync_start
+134603@1634279142.676870:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.677675:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.679024:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.680221:migration_bitmap_sync_end dirty_pages 310
+134603@1634279142.685149:migration_bitmap_sync_start
+134603@1634279142.686552:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.687357:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.688700:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.689896:migration_bitmap_sync_end dirty_pages 310
+134603@1634279142.690445:migration_bitmap_sync_start
+134603@1634279142.691767:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.692568:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.693898:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.695114:migration_bitmap_sync_end dirty_pages 310
+134603@1634279142.695653:migration_bitmap_sync_start
+134603@1634279142.696974:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.697768:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.699111:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.700358:migration_bitmap_sync_end dirty_pages 310
+134603@1634279142.701133:migration_bitmap_sync_start
+134603@1634279142.702505:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.703291:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.704688:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.705859:migration_bitmap_sync_end dirty_pages 310
+134603@1634279142.706378:migration_bitmap_sync_start
+134603@1634279142.707743:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.708547:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.709885:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.711091:migration_bitmap_sync_end dirty_pages 310
+134603@1634279142.711630:migration_bitmap_sync_start
+134603@1634279142.712955:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.713748:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.715078:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.716299:migration_bitmap_sync_end dirty_pages 390
+134603@1634279142.721506:migration_bitmap_sync_start
+134603@1634279142.722855:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.723657:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.725001:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.726203:migration_bitmap_sync_end dirty_pages 390
+134603@1634279142.726745:migration_bitmap_sync_start
+134603@1634279142.728072:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.728863:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.730203:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.731400:migration_bitmap_sync_end dirty_pages 390
+134603@1634279142.731944:migration_bitmap_sync_start
+134603@1634279142.733367:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.734262:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.735597:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.736787:migration_bitmap_sync_end dirty_pages 394
+134603@1634279142.738294:migration_bitmap_sync_start
+134603@1634279142.739641:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.740446:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.741811:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.742991:migration_bitmap_sync_end dirty_pages 498
+134603@1634279142.747203:migration_bitmap_sync_start
+134603@1634279142.748554:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.749348:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.750923:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.752120:migration_bitmap_sync_end dirty_pages 527
+134603@1634279142.756399:migration_bitmap_sync_start
+134603@1634279142.757746:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.758525:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.759863:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.761039:migration_bitmap_sync_end dirty_pages 527
+134603@1634279142.761552:migration_bitmap_sync_start
+134603@1634279142.762889:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.763670:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.765026:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.766203:migration_bitmap_sync_end dirty_pages 607
+134603@1634279142.771097:migration_bitmap_sync_start
+134603@1634279142.772431:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.773210:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.774557:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.775722:migration_bitmap_sync_end dirty_pages 607
+134603@1634279142.776276:migration_bitmap_sync_start
+134603@1634279142.777687:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.778466:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.779806:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.780981:migration_bitmap_sync_end dirty_pages 607
+134603@1634279142.781492:migration_bitmap_sync_start
+134603@1634279142.782842:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.783796:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.785188:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.786357:migration_bitmap_sync_end dirty_pages 607
+134603@1634279142.787124:migration_bitmap_sync_start
+134603@1634279142.788503:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.789282:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.790630:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.791802:migration_bitmap_sync_end dirty_pages 607
+134603@1634279142.792322:migration_bitmap_sync_start
+134603@1634279142.793674:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.794448:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.795795:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.796969:migration_bitmap_sync_end dirty_pages 607
+134603@1634279142.797479:migration_bitmap_sync_start
+134603@1634279142.798804:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.799608:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.801286:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.802492:migration_bitmap_sync_end dirty_pages 607
+134603@1634279142.803224:migration_bitmap_sync_start
+134603@1634279142.804887:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.805679:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.807127:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.808355:migration_bitmap_sync_end dirty_pages 607
+134603@1634279142.808875:migration_bitmap_sync_start
+134603@1634279142.810312:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.811132:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.812489:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.813882:migration_bitmap_sync_end dirty_pages 607
+134603@1634279142.814434:migration_bitmap_sync_start
+134603@1634279142.815822:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.816795:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.818442:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.819846:migration_bitmap_sync_end dirty_pages 684
+134603@1634279142.824423:migration_bitmap_sync_start
+134603@1634279142.825748:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.826552:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.827884:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.829088:migration_bitmap_sync_end dirty_pages 684
+134603@1634279142.829629:migration_bitmap_sync_start
+134603@1634279142.830957:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.831750:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.833138:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.834405:migration_bitmap_sync_end dirty_pages 684
+134603@1634279142.834942:migration_bitmap_sync_start
+134603@1634279142.836302:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.837101:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.838500:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.839680:migration_bitmap_sync_end dirty_pages 684
+134603@1634279142.840447:migration_bitmap_sync_start
+134603@1634279142.841825:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.842617:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.843968:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.845147:migration_bitmap_sync_end dirty_pages 684
+134603@1634279142.845665:migration_bitmap_sync_start
+134603@1634279142.846988:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.847770:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.849109:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.850291:migration_bitmap_sync_end dirty_pages 684
+134603@1634279142.850821:migration_bitmap_sync_start
+134603@1634279142.852154:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.852964:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.854749:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.855979:migration_bitmap_sync_end dirty_pages 684
+134603@1634279142.856771:migration_bitmap_sync_start
+134603@1634279142.858277:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.859125:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.860501:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.861712:migration_bitmap_sync_end dirty_pages 684
+134603@1634279142.862277:migration_bitmap_sync_start
+134603@1634279142.863627:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.864442:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.865789:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.867039:migration_bitmap_sync_end dirty_pages 761
+134603@1634279142.872231:migration_bitmap_sync_start
+134603@1634279142.873595:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.874402:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.875746:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.876924:migration_bitmap_sync_end dirty_pages 761
+134603@1634279142.877489:migration_bitmap_sync_start
+134603@1634279142.878806:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.879598:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.880954:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.882126:migration_bitmap_sync_end dirty_pages 761
+134603@1634279142.882694:migration_bitmap_sync_start
+134603@1634279142.884041:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.884828:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.886170:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.887461:migration_bitmap_sync_end dirty_pages 761
+134603@1634279142.888237:migration_bitmap_sync_start
+134603@1634279142.889652:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.890488:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.891928:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.893161:migration_bitmap_sync_end dirty_pages 761
+134603@1634279142.893683:migration_bitmap_sync_start
+134603@1634279142.895016:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.895790:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.897154:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.898321:migration_bitmap_sync_end dirty_pages 761
+134603@1634279142.898832:migration_bitmap_sync_start
+134603@1634279142.900328:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.901335:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.902737:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.903921:migration_bitmap_sync_end dirty_pages 761
+134603@1634279142.904728:migration_bitmap_sync_start
+134603@1634279142.906115:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.906887:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.908244:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.909423:migration_bitmap_sync_end dirty_pages 761
+134603@1634279142.909946:migration_bitmap_sync_start
+134603@1634279142.911268:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.912059:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.913398:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.914567:migration_bitmap_sync_end dirty_pages 761
+134603@1634279142.915096:migration_bitmap_sync_start
+134603@1634279142.916435:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.917391:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.918732:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.919986:migration_bitmap_sync_end dirty_pages 849
+134603@1634279142.925038:migration_bitmap_sync_start
+134603@1634279142.926374:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.927152:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.928499:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.929671:migration_bitmap_sync_end dirty_pages 849
+134603@1634279142.930199:migration_bitmap_sync_start
+134603@1634279142.931527:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.932321:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.933814:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.935046:migration_bitmap_sync_end dirty_pages 849
+134603@1634279142.935927:migration_bitmap_sync_start
+134603@1634279142.937420:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.938219:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.939650:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.940988:migration_bitmap_sync_end dirty_pages 849
+134603@1634279142.941511:migration_bitmap_sync_start
+134603@1634279142.942896:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.943749:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.945086:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.946527:migration_bitmap_sync_end dirty_pages 849
+134603@1634279142.947054:migration_bitmap_sync_start
+134603@1634279142.948443:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.949411:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.950750:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.951928:migration_bitmap_sync_end dirty_pages 849
+134603@1634279142.952543:migration_bitmap_sync_start
+134603@1634279142.954164:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.955141:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.956566:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.957749:migration_bitmap_sync_end dirty_pages 849
+134603@1634279142.958571:migration_bitmap_sync_start
+134603@1634279142.959950:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.960732:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.962085:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.963264:migration_bitmap_sync_end dirty_pages 849
+134603@1634279142.963958:migration_bitmap_sync_start
+134603@1634279142.965311:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.966124:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.967887:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.969072:migration_bitmap_sync_end dirty_pages 926
+134603@1634279142.973836:migration_bitmap_sync_start
+134603@1634279142.975198:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.976007:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.977338:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.978531:migration_bitmap_sync_end dirty_pages 926
+134603@1634279142.979080:migration_bitmap_sync_start
+134603@1634279142.980392:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.981191:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.982521:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.983762:migration_bitmap_sync_end dirty_pages 926
+134603@1634279142.984983:migration_bitmap_sync_start
+134603@1634279142.986431:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.987238:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.988584:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.989778:migration_bitmap_sync_end dirty_pages 926
+134603@1634279142.990328:migration_bitmap_sync_start
+134603@1634279142.991655:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.992455:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.993782:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279142.994982:migration_bitmap_sync_end dirty_pages 926
+134603@1634279142.995519:migration_bitmap_sync_start
+134603@1634279142.996828:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279142.997629:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279142.998970:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.000194:migration_bitmap_sync_end dirty_pages 926
+134603@1634279143.000744:migration_bitmap_sync_start
+134603@1634279143.002092:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.002896:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.004698:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.005920:migration_bitmap_sync_end dirty_pages 926
+134603@1634279143.006672:migration_bitmap_sync_start
+134603@1634279143.008138:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.008925:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.010268:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.011435:migration_bitmap_sync_end dirty_pages 926
+134603@1634279143.011953:migration_bitmap_sync_start
+134603@1634279143.013293:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.014097:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.015454:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.016960:migration_bitmap_sync_end dirty_pages 926
+134603@1634279143.017803:migration_bitmap_sync_start
+134603@1634279143.019270:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.020069:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.021407:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.022584:migration_bitmap_sync_end dirty_pages 1003
+134603@1634279143.026840:migration_bitmap_sync_start
+134603@1634279143.028180:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.028969:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.030292:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.031463:migration_bitmap_sync_end dirty_pages 1003
+134603@1634279143.031997:migration_bitmap_sync_start
+134603@1634279143.033668:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.034607:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.036009:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.037188:migration_bitmap_sync_end dirty_pages 1003
+134603@1634279143.037938:migration_bitmap_sync_start
+134603@1634279143.039322:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.040103:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.041446:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.042617:migration_bitmap_sync_end dirty_pages 1003
+134603@1634279143.043140:migration_bitmap_sync_start
+134603@1634279143.044461:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.045240:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.046568:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.047734:migration_bitmap_sync_end dirty_pages 1003
+134603@1634279143.048249:migration_bitmap_sync_start
+134603@1634279143.049860:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.050806:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.052163:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.053336:migration_bitmap_sync_end dirty_pages 1003
+134603@1634279143.054166:migration_bitmap_sync_start
+134603@1634279143.055612:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.056401:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.057735:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.058905:migration_bitmap_sync_end dirty_pages 1003
+134603@1634279143.059423:migration_bitmap_sync_start
+134603@1634279143.060743:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.061520:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.062853:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.064031:migration_bitmap_sync_end dirty_pages 1003
+134603@1634279143.064542:migration_bitmap_sync_start
+134603@1634279143.065972:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.067021:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.068553:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.069738:migration_bitmap_sync_end dirty_pages 1003
+134603@1634279143.070592:migration_bitmap_sync_start
+134603@1634279143.072042:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.072820:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.074159:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.075331:migration_bitmap_sync_end dirty_pages 1080
+134603@1634279143.079836:migration_bitmap_sync_start
+134603@1634279143.081177:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.081974:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.083653:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.084882:migration_bitmap_sync_end dirty_pages 1080
+134603@1634279143.085416:migration_bitmap_sync_start
+134603@1634279143.086769:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.087578:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.089019:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.090190:migration_bitmap_sync_end dirty_pages 1080
+134603@1634279143.090956:migration_bitmap_sync_start
+134603@1634279143.092337:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.093121:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.094456:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.095625:migration_bitmap_sync_end dirty_pages 1080
+134603@1634279143.096148:migration_bitmap_sync_start
+134603@1634279143.097467:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.098240:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.099632:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.100808:migration_bitmap_sync_end dirty_pages 1080
+134603@1634279143.101339:migration_bitmap_sync_start
+134603@1634279143.102888:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.103877:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.105246:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.106421:migration_bitmap_sync_end dirty_pages 1080
+134603@1634279143.107198:migration_bitmap_sync_start
+134603@1634279143.108668:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.109463:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.110812:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.111990:migration_bitmap_sync_end dirty_pages 1127
+134603@1634279143.114687:migration_bitmap_sync_start
+134603@1634279143.116201:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.117188:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.118713:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.119882:migration_bitmap_sync_end dirty_pages 1180
+134603@1634279143.123651:migration_bitmap_sync_start
+134603@1634279143.125046:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.125832:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.127185:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.128555:migration_bitmap_sync_end dirty_pages 1223
+134603@1634279143.132427:migration_bitmap_sync_start
+134603@1634279143.133909:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.134729:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.136325:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.137718:migration_bitmap_sync_end dirty_pages 1223
+134603@1634279143.138265:migration_bitmap_sync_start
+134603@1634279143.139700:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.140605:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.142018:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.143432:migration_bitmap_sync_end dirty_pages 1223
+134603@1634279143.144418:migration_bitmap_sync_start
+134603@1634279143.145797:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.146584:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.147918:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.149126:migration_bitmap_sync_end dirty_pages 1223
+134603@1634279143.149658:migration_bitmap_sync_start
+134603@1634279143.150992:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.151765:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.153429:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.154655:migration_bitmap_sync_end dirty_pages 1223
+134603@1634279143.155243:migration_bitmap_sync_start
+134603@1634279143.156649:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.157433:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.158771:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.159950:migration_bitmap_sync_end dirty_pages 1223
+134603@1634279143.160634:migration_bitmap_sync_start
+134603@1634279143.162034:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.162814:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.164152:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.165319:migration_bitmap_sync_end dirty_pages 1223
+134603@1634279143.165926:migration_bitmap_sync_start
+134603@1634279143.167274:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.168064:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.169667:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.170952:migration_bitmap_sync_end dirty_pages 1223
+134603@1634279143.171480:migration_bitmap_sync_start
+134603@1634279143.172815:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.173624:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.175056:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.176234:migration_bitmap_sync_end dirty_pages 1300
+134603@1634279143.180650:migration_bitmap_sync_start
+134603@1634279143.182005:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.182818:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.184183:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.185380:migration_bitmap_sync_end dirty_pages 1300
+134603@1634279143.185947:migration_bitmap_sync_start
+134603@1634279143.187608:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.188429:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.189825:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.191026:migration_bitmap_sync_end dirty_pages 1300
+134603@1634279143.191573:migration_bitmap_sync_start
+134603@1634279143.192901:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.193705:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.195053:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.196252:migration_bitmap_sync_end dirty_pages 1300
+134603@1634279143.197028:migration_bitmap_sync_start
+134603@1634279143.198407:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.199214:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.200562:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.201744:migration_bitmap_sync_end dirty_pages 1300
+134603@1634279143.202283:migration_bitmap_sync_start
+134603@1634279143.203749:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.204550:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.205953:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.207128:migration_bitmap_sync_end dirty_pages 1300
+134603@1634279143.207670:migration_bitmap_sync_start
+134603@1634279143.209019:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.209804:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.211154:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.212333:migration_bitmap_sync_end dirty_pages 1300
+134603@1634279143.213084:migration_bitmap_sync_start
+134603@1634279143.214460:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.215251:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.216611:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.217790:migration_bitmap_sync_end dirty_pages 1300
+134603@1634279143.218326:migration_bitmap_sync_start
+134603@1634279143.219703:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.220682:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.222083:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.223264:migration_bitmap_sync_end dirty_pages 1379
+134603@1634279143.227771:migration_bitmap_sync_start
+134603@1634279143.229120:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.229905:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.231245:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.232430:migration_bitmap_sync_end dirty_pages 1379
+134603@1634279143.233270:migration_bitmap_sync_start
+134603@1634279143.234658:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.235453:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.236945:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.238127:migration_bitmap_sync_end dirty_pages 1485
+134603@1634279143.242838:migration_bitmap_sync_start
+134603@1634279143.244191:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.244980:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.246318:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.247502:migration_bitmap_sync_end dirty_pages 1485
+134603@1634279143.248027:migration_bitmap_sync_start
+134603@1634279143.249351:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.250140:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.251480:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.252660:migration_bitmap_sync_end dirty_pages 1485
+134603@1634279143.253584:migration_bitmap_sync_start
+134603@1634279143.255069:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.255865:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.257251:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.258434:migration_bitmap_sync_end dirty_pages 1485
+134603@1634279143.258963:migration_bitmap_sync_start
+134603@1634279143.260305:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.261095:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.262427:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.263609:migration_bitmap_sync_end dirty_pages 1485
+134603@1634279143.264136:migration_bitmap_sync_start
+134603@1634279143.265460:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.266263:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.267600:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.268777:migration_bitmap_sync_end dirty_pages 1485
+134603@1634279143.269328:migration_bitmap_sync_start
+134603@1634279143.270997:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.271784:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.273151:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.274322:migration_bitmap_sync_end dirty_pages 1529
+134603@1634279143.278573:migration_bitmap_sync_start
+134603@1634279143.279902:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.280696:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.282035:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.283230:migration_bitmap_sync_end dirty_pages 1562
+134603@1634279143.287556:migration_bitmap_sync_start
+134603@1634279143.288925:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.289718:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.291076:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.292259:migration_bitmap_sync_end dirty_pages 1562
+134603@1634279143.292771:migration_bitmap_sync_start
+134603@1634279143.294099:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.294888:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.296236:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.297416:migration_bitmap_sync_end dirty_pages 1562
+134603@1634279143.297927:migration_bitmap_sync_start
+134603@1634279143.299264:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.300049:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.301384:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.302562:migration_bitmap_sync_end dirty_pages 1562
+134603@1634279143.303613:migration_bitmap_sync_start
+134603@1634279143.305052:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.306026:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.307444:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.308619:migration_bitmap_sync_end dirty_pages 1562
+134603@1634279143.309251:migration_bitmap_sync_start
+134603@1634279143.310590:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.311371:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.312808:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.313997:migration_bitmap_sync_end dirty_pages 1562
+134603@1634279143.314640:migration_bitmap_sync_start
+134603@1634279143.315982:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.316854:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.318429:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.319609:migration_bitmap_sync_end dirty_pages 1562
+134603@1634279143.320352:migration_bitmap_sync_start
+134603@1634279143.321785:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.322575:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.323922:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.325106:migration_bitmap_sync_end dirty_pages 1681
+134603@1634279143.329619:migration_bitmap_sync_start
+134603@1634279143.330946:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.331716:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.333368:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.334615:migration_bitmap_sync_end dirty_pages 1681
+134603@1634279143.335148:migration_bitmap_sync_start
+134603@1634279143.336488:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.337297:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.338717:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.339889:migration_bitmap_sync_end dirty_pages 1681
+134603@1634279143.340642:migration_bitmap_sync_start
+134603@1634279143.342037:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.342811:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.344164:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.345334:migration_bitmap_sync_end dirty_pages 1681
+134603@1634279143.345849:migration_bitmap_sync_start
+134603@1634279143.347183:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.347973:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.349381:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.350563:migration_bitmap_sync_end dirty_pages 1681
+134603@1634279143.351095:migration_bitmap_sync_start
+134603@1634279143.352549:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.353556:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.355077:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.356248:migration_bitmap_sync_end dirty_pages 1681
+134603@1634279143.357068:migration_bitmap_sync_start
+134603@1634279143.358459:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.359254:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.360593:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.361764:migration_bitmap_sync_end dirty_pages 1681
+134603@1634279143.362288:migration_bitmap_sync_start
+134603@1634279143.363619:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.364408:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.365779:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.367189:migration_bitmap_sync_end dirty_pages 1681
+134603@1634279143.367791:migration_bitmap_sync_start
+134603@1634279143.369155:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.369988:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.371392:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.372575:migration_bitmap_sync_end dirty_pages 1681
+134603@1634279143.373310:migration_bitmap_sync_start
+134603@1634279143.374695:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.375481:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.376821:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.378000:migration_bitmap_sync_end dirty_pages 1758
+134603@1634279143.382418:migration_bitmap_sync_start
+134603@1634279143.383778:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.384562:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.386051:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.387383:migration_bitmap_sync_end dirty_pages 1758
+134603@1634279143.387909:migration_bitmap_sync_start
+134603@1634279143.389281:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.390100:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.391499:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.392668:migration_bitmap_sync_end dirty_pages 1758
+134603@1634279143.393675:migration_bitmap_sync_start
+134603@1634279143.395076:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.395851:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.397197:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.398365:migration_bitmap_sync_end dirty_pages 1758
+134603@1634279143.398880:migration_bitmap_sync_start
+134603@1634279143.400264:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.401045:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.402427:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.403846:migration_bitmap_sync_end dirty_pages 1758
+134603@1634279143.404440:migration_bitmap_sync_start
+134603@1634279143.405842:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.406632:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.407987:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.409161:migration_bitmap_sync_end dirty_pages 1758
+134603@1634279143.409882:migration_bitmap_sync_start
+134603@1634279143.411278:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.412062:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.413394:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.414566:migration_bitmap_sync_end dirty_pages 1758
+134603@1634279143.415091:migration_bitmap_sync_start
+134603@1634279143.416488:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.417281:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.418620:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.420037:migration_bitmap_sync_end dirty_pages 1758
+134603@1634279143.420756:migration_bitmap_sync_start
+134603@1634279143.422144:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.423135:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.424603:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.425829:migration_bitmap_sync_end dirty_pages 1758
+134603@1634279143.426551:migration_bitmap_sync_start
+134603@1634279143.428050:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.428863:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.430238:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.431435:migration_bitmap_sync_end dirty_pages 1835
+134603@1634279143.436129:migration_bitmap_sync_start
+134603@1634279143.437887:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.439025:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.440675:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.441895:migration_bitmap_sync_end dirty_pages 1835
+134603@1634279143.442673:migration_bitmap_sync_start
+134603@1634279143.444296:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.445154:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.446611:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.447877:migration_bitmap_sync_end dirty_pages 1835
+134603@1634279143.448469:migration_bitmap_sync_start
+134603@1634279143.449898:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.450809:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.452234:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.453407:migration_bitmap_sync_end dirty_pages 1835
+134603@1634279143.453948:migration_bitmap_sync_start
+134603@1634279143.455303:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.456094:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.457438:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.458617:migration_bitmap_sync_end dirty_pages 1835
+134603@1634279143.459342:migration_bitmap_sync_start
+134603@1634279143.460727:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.461521:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.462866:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.464054:migration_bitmap_sync_end dirty_pages 1835
+134603@1634279143.464576:migration_bitmap_sync_start
+134603@1634279143.465915:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.466708:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.468058:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.469239:migration_bitmap_sync_end dirty_pages 1835
+134603@1634279143.469900:migration_bitmap_sync_start
+134603@1634279143.471619:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.472422:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.473774:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.474960:migration_bitmap_sync_end dirty_pages 1835
+134603@1634279143.475688:migration_bitmap_sync_start
+134603@1634279143.477080:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.477863:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.479212:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.480392:migration_bitmap_sync_end dirty_pages 1912
+134603@1634279143.484883:migration_bitmap_sync_start
+134603@1634279143.486230:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.487175:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.488517:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.489687:migration_bitmap_sync_end dirty_pages 1912
+134603@1634279143.490240:migration_bitmap_sync_start
+134603@1634279143.491638:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.492431:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.493771:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.494953:migration_bitmap_sync_end dirty_pages 1912
+134603@1634279143.495659:migration_bitmap_sync_start
+134603@1634279143.497064:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.497848:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.499203:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.500384:migration_bitmap_sync_end dirty_pages 1912
+134603@1634279143.500909:migration_bitmap_sync_start
+134603@1634279143.502255:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.503111:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.504811:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.506063:migration_bitmap_sync_end dirty_pages 1912
+134603@1634279143.506603:migration_bitmap_sync_start
+134603@1634279143.508024:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.508820:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.510214:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.511407:migration_bitmap_sync_end dirty_pages 1912
+134603@1634279143.512114:migration_bitmap_sync_start
+134603@1634279143.513544:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.514365:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.515710:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.516889:migration_bitmap_sync_end dirty_pages 1912
+134603@1634279143.517426:migration_bitmap_sync_start
+134603@1634279143.518760:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.519564:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.521607:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.522831:migration_bitmap_sync_end dirty_pages 1912
+134603@1634279143.523399:migration_bitmap_sync_start
+134603@1634279143.524774:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.525569:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.526908:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.528102:migration_bitmap_sync_end dirty_pages 1912
+134603@1634279143.528792:migration_bitmap_sync_start
+134603@1634279143.530189:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.530970:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.532315:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.533530:migration_bitmap_sync_end dirty_pages 1989
+134603@1634279143.538311:migration_bitmap_sync_start
+134603@1634279143.539649:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.540438:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.541774:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.542996:migration_bitmap_sync_end dirty_pages 1989
+134603@1634279143.544053:migration_bitmap_sync_start
+134603@1634279143.545472:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.546258:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.547595:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.548763:migration_bitmap_sync_end dirty_pages 1989
+134603@1634279143.549343:migration_bitmap_sync_start
+134603@1634279143.550684:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.551474:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.553125:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.554376:migration_bitmap_sync_end dirty_pages 1989
+134603@1634279143.554903:migration_bitmap_sync_start
+134603@1634279143.556245:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.557062:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.558480:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.559648:migration_bitmap_sync_end dirty_pages 1989
+134603@1634279143.560343:migration_bitmap_sync_start
+134603@1634279143.561725:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.562507:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.563849:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.565031:migration_bitmap_sync_end dirty_pages 1989
+134603@1634279143.565546:migration_bitmap_sync_start
+134603@1634279143.566926:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.567713:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.569114:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.570526:migration_bitmap_sync_end dirty_pages 1989
+134603@1634279143.571111:migration_bitmap_sync_start
+134603@1634279143.572525:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.573321:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.574673:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.575851:migration_bitmap_sync_end dirty_pages 1989
+134603@1634279143.576614:migration_bitmap_sync_start
+134603@1634279143.578027:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.578806:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.580144:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.581318:migration_bitmap_sync_end dirty_pages 77
+134603@1634279143.585959:migration_bitmap_sync_start
+134603@1634279143.587537:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.588340:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.589674:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.590873:migration_bitmap_sync_end dirty_pages 77
+134603@1634279143.591441:migration_bitmap_sync_start
+134603@1634279143.592809:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.593589:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.594921:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.596095:migration_bitmap_sync_end dirty_pages 77
+134603@1634279143.596803:migration_bitmap_sync_start
+134603@1634279143.598198:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.598984:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.600360:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.601536:migration_bitmap_sync_end dirty_pages 77
+134603@1634279143.602072:migration_bitmap_sync_start
+134603@1634279143.603684:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.604587:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.606014:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.607190:migration_bitmap_sync_end dirty_pages 77
+134603@1634279143.608024:migration_bitmap_sync_start
+134603@1634279143.609420:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.610210:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.611622:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.612795:migration_bitmap_sync_end dirty_pages 77
+134603@1634279143.613316:migration_bitmap_sync_start
+134603@1634279143.614660:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.615435:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.616832:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.618008:migration_bitmap_sync_end dirty_pages 177
+134603@1634279143.622956:migration_bitmap_sync_start
+134603@1634279143.624295:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.625073:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.626426:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.627587:migration_bitmap_sync_end dirty_pages 177
+134603@1634279143.628328:migration_bitmap_sync_start
+134603@1634279143.629775:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.630556:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.631913:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.633095:migration_bitmap_sync_end dirty_pages 252
+134603@1634279143.637720:migration_bitmap_sync_start
+134603@1634279143.639070:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.639843:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.641209:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.642379:migration_bitmap_sync_end dirty_pages 317
+134603@1634279143.646897:migration_bitmap_sync_start
+134603@1634279143.648242:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.649039:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.650412:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.651583:migration_bitmap_sync_end dirty_pages 317
+134603@1634279143.652110:migration_bitmap_sync_start
+134603@1634279143.653543:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.654417:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.655823:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.656999:migration_bitmap_sync_end dirty_pages 317
+134603@1634279143.657517:migration_bitmap_sync_start
+134603@1634279143.658860:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.659640:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.660992:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.662162:migration_bitmap_sync_end dirty_pages 317
+134603@1634279143.662967:migration_bitmap_sync_start
+134603@1634279143.664364:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.665145:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.666527:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.667697:migration_bitmap_sync_end dirty_pages 317
+134603@1634279143.668221:migration_bitmap_sync_start
+134603@1634279143.669607:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.670575:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.671951:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.673117:migration_bitmap_sync_end dirty_pages 317
+134603@1634279143.673650:migration_bitmap_sync_start
+134603@1634279143.675011:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.675787:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.677141:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.678310:migration_bitmap_sync_end dirty_pages 317
+134603@1634279143.679060:migration_bitmap_sync_start
+134603@1634279143.680457:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.681237:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.682636:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.683817:migration_bitmap_sync_end dirty_pages 394
+134603@1634279143.688707:migration_bitmap_sync_start
+134603@1634279143.690054:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.690827:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.692173:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.693376:migration_bitmap_sync_end dirty_pages 394
+134603@1634279143.693909:migration_bitmap_sync_start
+134603@1634279143.695340:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.696118:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.697470:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.698641:migration_bitmap_sync_end dirty_pages 394
+134603@1634279143.699468:migration_bitmap_sync_start
+134603@1634279143.700847:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.701629:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.703165:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.704340:migration_bitmap_sync_end dirty_pages 394
+134603@1634279143.704863:migration_bitmap_sync_start
+134603@1634279143.706234:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.707015:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.708427:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.709593:migration_bitmap_sync_end dirty_pages 394
+134603@1634279143.710118:migration_bitmap_sync_start
+134603@1634279143.711466:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.712244:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.713589:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.714760:migration_bitmap_sync_end dirty_pages 394
+134603@1634279143.715539:migration_bitmap_sync_start
+134603@1634279143.716962:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.717741:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.719102:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.720430:migration_bitmap_sync_end dirty_pages 394
+134603@1634279143.720978:migration_bitmap_sync_start
+134603@1634279143.722392:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.723175:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.724528:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.725700:migration_bitmap_sync_end dirty_pages 394
+134603@1634279143.726222:migration_bitmap_sync_start
+134603@1634279143.727565:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.728350:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.729700:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.730873:migration_bitmap_sync_end dirty_pages 394
+134603@1634279143.731689:migration_bitmap_sync_start
+134603@1634279143.733134:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.733917:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.735296:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.736512:migration_bitmap_sync_end dirty_pages 483
+134603@1634279143.741518:migration_bitmap_sync_start
+134603@1634279143.742886:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.743667:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.745021:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.746195:migration_bitmap_sync_end dirty_pages 677
+134603@1634279143.751396:migration_bitmap_sync_start
+134603@1634279143.752747:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.753711:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.755258:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.756430:migration_bitmap_sync_end dirty_pages 677
+134603@1634279143.756986:migration_bitmap_sync_start
+134603@1634279143.758413:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.759199:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.760675:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.761853:migration_bitmap_sync_end dirty_pages 677
+134603@1634279143.762381:migration_bitmap_sync_start
+134603@1634279143.763782:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.764569:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.766044:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.767390:migration_bitmap_sync_end dirty_pages 677
+134603@1634279143.768172:migration_bitmap_sync_start
+134603@1634279143.769800:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.770609:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.772121:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.773440:migration_bitmap_sync_end dirty_pages 677
+134603@1634279143.773977:migration_bitmap_sync_start
+134603@1634279143.775434:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.776351:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.778306:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.779831:migration_bitmap_sync_end dirty_pages 677
+134603@1634279143.780354:migration_bitmap_sync_start
+134603@1634279143.781703:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.782500:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.783850:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.785028:migration_bitmap_sync_end dirty_pages 760
+134603@1634279143.790239:migration_bitmap_sync_start
+134603@1634279143.791625:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.792412:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.793772:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.794958:migration_bitmap_sync_end dirty_pages 760
+134603@1634279143.795478:migration_bitmap_sync_start
+134603@1634279143.796826:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.797610:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.799058:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.800412:migration_bitmap_sync_end dirty_pages 760
+134603@1634279143.800942:migration_bitmap_sync_start
+134603@1634279143.802369:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.803326:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.804910:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.806258:migration_bitmap_sync_end dirty_pages 760
+134603@1634279143.806916:migration_bitmap_sync_start
+134603@1634279143.808316:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.809110:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.810452:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.811629:migration_bitmap_sync_end dirty_pages 760
+134603@1634279143.812157:migration_bitmap_sync_start
+134603@1634279143.813533:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.814325:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.815676:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.816943:migration_bitmap_sync_end dirty_pages 760
+134603@1634279143.817905:migration_bitmap_sync_start
+134603@1634279143.819836:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.820951:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.822693:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.824310:migration_bitmap_sync_end dirty_pages 2465
+134603@1634279143.842544:migration_bitmap_sync_start
+134603@1634279143.844209:memory_region_sync_dirty mr '(all)' listener 'kvm-memory' synced (global=0)
+134603@1634279143.845107:memory_region_sync_dirty mr '(all)' listener 'vhost' synced (global=0)
+134603@1634279143.846605:memory_region_sync_dirty mr '(all)' listener 'kvm-smram' synced (global=0)
+134603@1634279143.847927:migration_bitmap_sync_end dirty_pages 5276
