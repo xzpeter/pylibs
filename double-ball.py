@@ -7,7 +7,6 @@ from datetime import datetime
 from itertools import combinations, permutations
 
 # TODO:
-# - Fix using Chinese character (search FIXME)
 # - Rewrite some codes to use lambda.  Refers to g_rowcol_list impl
 
 g_version = "v1.0.6"
