@@ -81,6 +81,7 @@ v1.1 (2023-11-12):
   - 将“首位”和“末尾”奇偶数扩展为可以指定任意数字的奇偶数（共6个）
   - 允许“上期重复”和“各位奇偶”标签可以依据选项改变颜色
   - 加入“和值范围”选项（共6个区间，从40-160）
+- 增加“基本分区参数2”，可以指定七小区选项
 """
 
 g_title = "双色球缩水工具 - %s" % g_version
@@ -123,6 +124,16 @@ g_odd_even_list = {
     "大奇": lambda x: x>=17 and x<=33 and x%2==1,
     "小偶": lambda x: x>=2 and x<=16 and x%2==0,
     "大偶": lambda x: x>=18 and x<=30 and x%2==0,
+}
+
+g_seven_section_list = {
+    "一小区": lambda x: x>=1 and x<=4,
+    "二小区": lambda x: x>=5 and x<=9,
+    "三小区": lambda x: x>=10 and x<=14,
+    "四小区": lambda x: x>=15 and x<=19,
+    "五小区": lambda x: x>=20 and x<=24,
+    "六小区": lambda x: x>=25 and x<=29,
+    "七小区": lambda x: x>=30 and x<=33,
 }
 
 #
@@ -206,15 +217,7 @@ g_rowcol_list = {
     },
     "7-small-sections": {
         "name": "七小区",
-        "groups": {
-            "一小区": lambda x: x>=1 and x<=4,
-            "二小区": lambda x: x>=5 and x<=9,
-            "三小区": lambda x: x>=10 and x<=14,
-            "四小区": lambda x: x>=15 and x<=19,
-            "五小区": lambda x: x>=20 and x<=24,
-            "六小区": lambda x: x>=25 and x<=29,
-            "七小区": lambda x: x>=30 and x<=33,
-        },
+        "groups": g_seven_section_list,
         "max": 5,
     }
 }
@@ -682,6 +685,21 @@ class DBCore:
                 return True
         return False
 
+    def seven_ranges_check(self, array, seven_ranges):
+        for key in seven_ranges.keys():
+            required = seven_ranges[key]
+            if not self.valid(required):
+                continue
+            count = 0
+            fn = g_seven_section_list[key]
+            for n in array:
+                if fn(n):
+                    count += 1
+            if count in required:
+                continue
+            return False
+        return True
+
     def dball_calc(self, params):
         rowcol_all = params["rowcol_all"]
         danma_list = params["danma_list"]
@@ -729,6 +747,7 @@ class DBCore:
         last_nums = params["last_nums"]
         three_or_four = params["three_or_four"]
         sum_ranges = params["sum_ranges"]
+        seven_ranges = params["seven_ranges"]
 
         rand_set = combinations(num_list, g_elements - len(danma_list))
         input_set = map(lambda x: x + tuple(danma_list), rand_set)
@@ -868,6 +887,8 @@ class DBCore:
             if not self.three_or_four_check(array, three_or_four):
                 continue
             if not self.sum_ranges_check(array, sum_ranges):
+                continue
+            if not self.seven_ranges_check(array, seven_ranges):
                 continue
 
             output_set.append(array)
@@ -1055,6 +1076,13 @@ class DBCore:
     def get_odd_even_choices(self):
         return list(map(lambda choice: self.get_choice(choice), self.odd_even_choices))
 
+    def get_seven_ranges(self):
+        result = {}
+        for key in g_seven_section_list.keys():
+            boxes = self.seven_ranges[key]["checkboxes"]
+            result[key] = self.get_list_of_array(boxes)
+        return result
+
     def do_generate(self, event):
         self.clear()
 
@@ -1133,6 +1161,7 @@ class DBCore:
         rowcol_all = self.get_rowcol_all()
         three_or_four = self.get_three_or_four()
         sum_ranges = self.get_sum_ranges()
+        seven_ranges = self.get_seven_ranges()
 
         params = {
             "rowcol_all": rowcol_all,
@@ -1180,6 +1209,7 @@ class DBCore:
             "last_nums": last_nums,
             "three_or_four": three_or_four,
             "sum_ranges": sum_ranges,
+            "seven_ranges": seven_ranges,
         }
         self.result = self.dball_calc(params)
         self.show_result(self.result)
@@ -1682,6 +1712,46 @@ class DBPositionPanel(DBPanel):
 
         self.SetSizer(sizer_conds)
 
+class DBPositionPanel2(DBPanel):
+    """基本分区参数2"""
+    def __init__(self, parent, core):
+        DBPanel.__init__(self, parent, core)
+        self.__create_objects()
+        self.__do_layout()
+
+    def __create_objects(self):
+        #七小区
+        self.core.seven_ranges = ranges = {}
+        for name in g_seven_section_list.keys():
+            boxes = []
+            for j in range(0, 5):
+                box = self.new_checkbox(str(j))
+                boxes.append(box)
+            buttons = [
+                self.new_button_setall(boxes),
+                self.new_button_clearall(boxes),
+            ]
+            ranges[name] = { "checkboxes": boxes, "buttons": buttons }
+
+    def __do_layout(self):
+        sizer_conds = wx.FlexGridSizer(20, 2, 5, 5)
+
+        sizer_conds.Add(self.new_static("七小区选择："))
+        sizer_conds.Add(self.new_static(""))
+
+        for name in self.core.seven_ranges.keys():
+            # 0-4, plus two buttons -> 7
+            sizer = wx.GridSizer(1, 7, g_border2, g_border2)
+            entry = self.core.seven_ranges[name]
+            for cb in entry["checkboxes"]:
+                sizer.Add(cb, flag=g_flag)
+            for button in entry["buttons"]:
+                sizer.Add(button, flag=g_flag)
+            sizer_conds.Add(self.new_static("%s：" % name, entry["checkboxes"]))
+            sizer_conds.Add(sizer, border=g_border, flag=g_flag)
+
+        self.SetSizer(sizer_conds)
+
 class DBThreeOrFourPanel(DBPanel):
     """出3个或者4个参数"""
     def __init__(self, parent, core):
@@ -2076,13 +2146,15 @@ class MyApp(wx.App):
         main_panel = DBMainPanel(notebook, core)
         mod_panel = DBModPanel(notebook, core)
         position_panel = DBPositionPanel(notebook, core)
+        position_panel2 = DBPositionPanel2(notebook, core)
         three_or_four_panel = DBThreeOrFourPanel(notebook, core)
         rowcol_panel = DBRowColPanel(notebook, core)
         other_panel = DBOtherPanel(notebook, core)
         control_panel = DBControlPanel(notebook, core)
         notebook.AddPage(main_panel, "主选参数")
         notebook.AddPage(mod_panel, "除余参数")
-        notebook.AddPage(position_panel, "基本分区参数")
+        notebook.AddPage(position_panel, "基本分区参数1")
+        notebook.AddPage(position_panel2, "基本分区参数2")
         notebook.AddPage(three_or_four_panel, "出3个或者4个参数")
         notebook.AddPage(rowcol_panel, "N行列分区参数")
         notebook.AddPage(other_panel, "其他参数")
