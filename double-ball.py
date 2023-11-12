@@ -257,6 +257,9 @@ g_three_or_four_list = {
     },
 }
 
+# 和值范围
+g_sum_ranges = [[40, 70], [71, 80], [81, 100], [101, 120], [121, 140], [141, 160]]
+
 if sys.platform.startswith("linux"):
     g_os_windows = False
 else:
@@ -1794,6 +1797,13 @@ class DBOtherPanel(DBPanel):
         self.button_acs_setall = self.new_button_setall(self.core.acs)
         self.button_acs_clearall = self.new_button_clearall(self.core.acs)
 
+        self.core.sum_ranges = ranges = []
+        for one in g_sum_ranges:
+            box = self.new_checkbox("%s-%s" % (one[0], one[1]))
+            ranges.append(box)
+        self.button_sum_ranges_setall = self.new_button_setall(ranges)
+        self.button_sum_ranges_clearall = self.new_button_clearall(ranges)
+
     def __do_layout(self):
         sizer_conds_2 = wx.FlexGridSizer(12, 2, 5, 5)
 
@@ -1848,6 +1858,16 @@ class DBOtherPanel(DBPanel):
             sizer_odd_even.Add(self.core.odd_even_choices[i], flag=g_flag)
         sizer_conds_2.Add(self.new_static("各位奇偶：", self.core.odd_even_choices))
         sizer_conds_2.Add(sizer_odd_even, flag=g_flag)
+
+        ranges = self.core.sum_ranges
+        n_sum_ranges = len(ranges)
+        sizer_sum_ranges = wx.GridSizer(1, n_sum_ranges + 2, g_border2, g_border2)
+        for rg in ranges:
+            sizer_sum_ranges.Add(rg, flag=g_flag)
+        sizer_sum_ranges.Add(self.button_sum_ranges_setall, flag=g_flag)
+        sizer_sum_ranges.Add(self.button_sum_ranges_clearall, flag=g_flag)
+        sizer_conds_2.Add(self.new_static("和值范围：", ranges))
+        sizer_conds_2.Add(sizer_sum_ranges, border=g_border, flag=g_flag)
 
         self.SetSizer(sizer_conds_2)
 
