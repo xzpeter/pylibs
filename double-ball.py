@@ -3,6 +3,7 @@
 import wx
 import math
 import sys
+import json
 from datetime import datetime
 from itertools import combinations, permutations
 
@@ -71,6 +72,10 @@ v1.0.5 (2020-10-19):
 
 v1.0.6 (2020-10-25):
 - 修复升级平台软件后“胆码”和“上期结果”无法解析的问题
+
+v1.1 (2023-11-12):
+- 增加“出3个或者4个参数“子窗口，其中包括：“大小奇偶“，“除3余”，“除4余”，“除5余数”，“三区间”，“四分区”，“四角”
+  (注意：此窗口每一行选择超过2个子类会导致缩水必定失败；当2个子类被选中时，每个子类必定出3个数)
 """
 
 g_title = "双色球缩水工具 - %s" % g_version
@@ -172,6 +177,50 @@ g_rowcol_list = {
 }
 # How many empty groups (maximum)?
 g_rowcol_empty_n = 4
+
+g_three_or_four_list = {
+    "大小奇偶": {
+        "小奇": lambda x: x>=1 and x<=15 and x%2==1,
+        "大奇": lambda x: x>=17 and x<=33 and x%2==1,
+        "小偶": lambda x: x>=2 and x<=16 and x%2==0,
+        "大偶": lambda x: x>=18 and x<=30 and x%2==0,
+    },
+    "除3余数": {
+        "除3余0": lambda x: x%3==0,
+        "除3余1": lambda x: x%3==1,
+        "除3余2": lambda x: x%3==2,
+    },
+    "除4余数": {
+        "除4余0": lambda x: x%4==0,
+        "除4余1": lambda x: x%4==1,
+        "除4余2": lambda x: x%4==2,
+        "除4余3": lambda x: x%4==3,
+    },
+    "除5余数": {
+        "除5余0": lambda x: x%5==0,
+        "除5余1": lambda x: x%5==1,
+        "除5余2": lambda x: x%5==2,
+        "除5余3": lambda x: x%5==3,
+        "除5余4": lambda x: x%5==4,
+    },
+    "三区间": {
+        "第一区间": lambda x: x>=1 and x<=11,
+        "第二区间": lambda x: x>=12 and x<=22,
+        "第三区间": lambda x: x>=23 and x<=33,
+    },
+    "四分区 (无17)": {
+        "第一分区": lambda x: x>=1 and x<=8,
+        "第二分区": lambda x: x>=9 and x<=16,
+        "第三分区": lambda x: x>=18 and x<=25,
+        "第四分区": lambda x: x>=26 and x<=33,
+    },
+    "四角": {
+        "左上角": lambda x: x in [1,2,3,7,8,9,13,14,15],
+        "右上角": lambda x: x in [4,5,6,10,11,12,16,17,18],
+        "左下角": lambda x: x in [19,20,21,25,26,27,31,32,33],
+        "右下角": lambda x: x in [22,23,24,28,29,30],
+    },
+}
 
 if sys.platform.startswith("linux"):
     g_os_windows = False
@@ -506,6 +555,29 @@ class DBCore:
         # count how many zeros
         return result.count(0)
 
+    def count_lambda_satisfy(self, array, fn):
+        """How many numbers (of given array) satisfy the lambda()?"""
+        count = 0
+        for i in array:
+            if fn(i):
+                count += 1
+        return count
+
+    def three_or_four_check(self, array, three_or_four):
+        for name in three_or_four:
+            required = three_or_four[name]
+            if not self.valid(required):
+                continue
+            group = g_three_or_four_list[name]
+            for name in required:
+                # each section of the group
+                fn = group[name]
+                if self.count_lambda_satisfy(array, fn) in [3,4]:
+                    continue
+                else:
+                    return False
+        return True
+
     def dball_calc(self, params):
         rowcol_all = params["rowcol_all"]
         danma_list = params["danma_list"]
@@ -552,6 +624,7 @@ class DBCore:
         corner4range3 = params["corner4range3"]
         last_win = params["last_win"]
         last_nums = params["last_nums"]
+        three_or_four = params["three_or_four"]
 
         rand_set = combinations(num_list, g_elements - len(danma_list))
         input_set = map(lambda x: x + tuple(danma_list), rand_set)
@@ -707,6 +780,9 @@ class DBCore:
             if drop_this:
                 continue
 
+            if not self.three_or_four_check(array, three_or_four):
+                continue
+
             output_set.append(array)
 
         return output_set
@@ -729,11 +805,30 @@ class DBCore:
                 result.append(start_idx + i)
         return result
 
+    def get_list_of_names(self, array):
+        """
+        Like above, but parse checkboxes and output list of names rather
+        than number indexes.
+        """
+        result = []
+        for element in array:
+            if element.GetValue():
+                result.append(element.GetName())
+        return result
+
     def get_rowcol_all(self):
         result = {}
         for x in g_rowcol_list:
             boxes = self.rowcol[x]["checkboxes"]
             result[x] = self.get_list_of_array(boxes)
+        return result
+
+    def get_three_or_four(self):
+        result = {}
+        for name in self.three_or_four:
+            entry = self.three_or_four[name]
+            boxes = entry["checkboxes"]
+            result[name] = self.get_list_of_names(boxes)
         return result
 
     def get_nums(self):
@@ -944,6 +1039,7 @@ class DBCore:
                 return
 
         rowcol_all = self.get_rowcol_all()
+        three_or_four = self.get_three_or_four()
 
         params = {
             "rowcol_all": rowcol_all,
@@ -990,6 +1086,7 @@ class DBCore:
             "corner4range3": corner4range3,
             "last_win": last_win,
             "last_nums": last_nums,
+            "three_or_four": three_or_four,
         }
         self.result = self.dball_calc(params)
         self.show_result(self.result)
@@ -1041,6 +1138,7 @@ class DBPanel(wx.Panel):
     def new_checkbox(self, value):
         if g_has_custom_checkbox:
             new = wx.lib.checkbox.GenCheckBox(self, wx.ID_ANY, value, size=g_checkbox_size)
+            new.SetName(value)
         else:
             new = wx.CheckBox(self, wx.ID_ANY, value, size=g_checkbox_size)
         self.Bind(wx.EVT_CHECKBOX,
@@ -1485,6 +1583,54 @@ class DBPositionPanel(DBPanel):
 
         self.SetSizer(sizer_conds)
 
+class DBThreeOrFourPanel(DBPanel):
+    """出3个或者4个参数"""
+    def __init__(self, parent, core):
+        DBPanel.__init__(self, parent, core)
+        self.__create_objects()
+        self.__do_layout()
+
+    def __create_objects(self):
+        self.max_group_n = 0
+        self.core.three_or_four = {}
+        for name in g_three_or_four_list:
+            boxes = []
+            groups = g_three_or_four_list[name]
+            groups_n = len(groups)
+            # Remember the group with the most entries
+            if groups_n > self.max_group_n:
+                self.max_group_n = groups_n
+            for group_name in groups:
+                box = self.new_checkbox(group_name)
+                boxes.append(box)
+            setall = self.new_button_setall(boxes)
+            clearall = self.new_button_clearall(boxes)
+            self.core.three_or_four[name] = {
+                "checkboxes": boxes,
+                "button_setall": setall,
+                "button_clearall": clearall,
+            }
+
+    def __do_layout(self):
+        sizer_conds = wx.FlexGridSizer(20, 2, 5, 5)
+
+        for x in self.core.three_or_four:
+            this = self.core.three_or_four[x]
+            boxes = this["checkboxes"]
+            sizer = wx.GridSizer(1, self.max_group_n + 2, g_border2, g_border2)
+            for box in boxes:
+                sizer.Add(box, flag=g_flag)
+            residue = self.max_group_n - len(boxes)
+            while residue > 0:
+                sizer.Add(wx.StaticText(self, wx.ID_ANY, ""))
+                residue -= 1
+            sizer.Add(this["button_setall"], flag=g_flag)
+            sizer.Add(this["button_clearall"], flag=g_flag)
+            sizer_conds.Add(self.new_static("%s：" % x, boxes))
+            sizer_conds.Add(sizer, border=g_border, flag=g_flag)
+
+        self.SetSizer(sizer_conds)
+
 class DBRowColPanel(DBPanel):
     """N行列分区参数"""
     def __init__(self, parent, core):
@@ -1807,12 +1953,14 @@ class MyApp(wx.App):
         main_panel = DBMainPanel(notebook, core)
         mod_panel = DBModPanel(notebook, core)
         position_panel = DBPositionPanel(notebook, core)
+        three_or_four_panel = DBThreeOrFourPanel(notebook, core)
         rowcol_panel = DBRowColPanel(notebook, core)
         other_panel = DBOtherPanel(notebook, core)
         control_panel = DBControlPanel(notebook, core)
         notebook.AddPage(main_panel, "主选参数")
         notebook.AddPage(mod_panel, "除余参数")
         notebook.AddPage(position_panel, "基本分区参数")
+        notebook.AddPage(three_or_four_panel, "出3个或者4个参数")
         notebook.AddPage(rowcol_panel, "N行列分区参数")
         notebook.AddPage(other_panel, "其他参数")
         notebook.AddPage(control_panel, "控制页面")
