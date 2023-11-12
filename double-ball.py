@@ -77,7 +77,9 @@ v1.1 (2023-11-12):
 - 增加“出3个或者4个参数“子窗口，其中包括：“大小奇偶“，“除3余”，“除4余”，“除5余数”，“三区间”，“四分区”，“四角”
   (注意：此窗口每一行选择超过2个子类会导致缩水必定失败；当2个子类被选中时，每个子类必定出3个数)
 - 在“N行列分区参数”子窗口下，增加两条：“大小奇偶”（允许空0-2组），“七小区”（允许空0-5组）
-- 在“其他参数”子窗口下，将“首位”和“末尾”奇偶数扩展为可以指定任意数字的奇偶数（共6个）
+- 在“其他参数”子窗口下
+  - 将“首位”和“末尾”奇偶数扩展为可以指定任意数字的奇偶数（共6个）
+  - 允许“上期重复”和“各位奇偶”标签可以依据选项改变颜色
 """
 
 g_title = "双色球缩水工具 - %s" % g_version
@@ -297,6 +299,8 @@ class DBCore:
         #
         # static texts that may change bg color.  Formats:
         # [[static1, [checkbox1, ...], [static2, [checkbox2, ...]], ...]
+        #
+        # it can also support Choice over CheckBox
         self.dynamic_statics = []
         # Init fonts
         if g_os_windows:
@@ -334,12 +338,25 @@ class DBCore:
 
     def refresh_static_texts(self):
         for entry in self.dynamic_statics:
-            static, cb_list = entry
+            static, entry_list = entry
             enabled = False
-            for cb in cb_list:
-                if cb.GetValue():
-                    enabled = True
-                    break
+            for entry in entry_list:
+                t = type(entry)
+                if g_has_custom_checkbox:
+                    is_cb = t is wx.lib.checkbox.GenCheckBox
+                else:
+                    is_cb = t is wx.CheckBox
+                if is_cb:
+                    if entry.GetValue():
+                        enabled = True
+                        break
+                else:
+                    assert(t == wx.Choice)
+                    val = entry.GetSelection()
+                    # -1->not selected, 0->任意
+                    if val not in [-1, 0]:
+                        enabled = True
+                        break
             self.color_set(static, enabled)
         self.refresh()
 
@@ -1199,6 +1216,7 @@ class DBPanel(wx.Panel):
 
     def new_choice(self, choices):
         new = wx.Choice(self, wx.ID_ANY, choices=choices)
+        self.Bind(wx.EVT_CHOICE, lambda event: self.core.refresh_static_texts())
         self.core.items_choices.append(new)
         return new
 
@@ -1820,7 +1838,7 @@ class DBOtherPanel(DBPanel):
 
         sizer_conds_2.Add(self.new_static("上期结果："))
         sizer_conds_2.Add(sizer_last_win, border=g_border, flag=g_flag)
-        sizer_conds_2.Add(self.new_static("上期重复："))
+        sizer_conds_2.Add(self.new_static("上期重复：", self.core.last_nums))
         sizer_conds_2.Add(sizer_last_nums, border=g_border, flag=g_flag)
 
         n_odd_even = len(self.core.odd_even_choices)
@@ -1828,7 +1846,7 @@ class DBOtherPanel(DBPanel):
         for i in range(0, n_odd_even):
             sizer_odd_even.Add(self.new_static("  第%s位： " % (i+1)), flag=g_flag)
             sizer_odd_even.Add(self.core.odd_even_choices[i], flag=g_flag)
-        sizer_conds_2.Add(self.new_static("各位奇偶："))
+        sizer_conds_2.Add(self.new_static("各位奇偶：", self.core.odd_even_choices))
         sizer_conds_2.Add(sizer_odd_even, flag=g_flag)
 
         self.SetSizer(sizer_conds_2)
