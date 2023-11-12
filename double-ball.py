@@ -10,7 +10,7 @@ from itertools import combinations, permutations
 # TODO:
 # - Rewrite some codes to use lambda.  Refers to g_rowcol_list impl
 
-g_version = "v1.0.6"
+g_version = "v1.1"
 g_changelog = """
 v0.5 (2019-04-08):
 - 添加“打印”和“更新日志”按键
