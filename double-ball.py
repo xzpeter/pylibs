@@ -77,6 +77,7 @@ v1.1 (2023-11-12):
 - 增加“出3个或者4个参数“子窗口，其中包括：“大小奇偶“，“除3余”，“除4余”，“除5余数”，“三区间”，“四分区”，“四角”
   (注意：此窗口每一行选择超过2个子类会导致缩水必定失败；当2个子类被选中时，每个子类必定出3个数)
 - 在“N行列分区参数”子窗口下，增加两条：“大小奇偶”（允许空0-2组），“七小区”（允许空0-5组）
+- 在“其他参数”子窗口下，将“首位”和“末尾”奇偶数扩展为可以指定任意数字的奇偶数（共6个）
 """
 
 g_title = "双色球缩水工具 - %s" % g_version
@@ -288,6 +289,7 @@ class DBCore:
         # Puts all the widgets
         self.items_others = []
         self.items_checkboxes = []
+        self.items_choices = []
         self.items_buttons = []
         # Puts the results
         self.result = []
@@ -365,10 +367,8 @@ class DBCore:
         self.clear()
         for box in self.items_checkboxes:
             box.SetValue(False)
-        # self.sum_low.SetValue("")
-        # self.sum_high.SetValue("")
-        self.first_odd.SetSelection(-1)
-        self.last_odd.SetSelection(-1)
+        for choice in self.items_choices:
+            choice.SetSelection(-1)
         self.last_win.SetValue("")
         self.refresh_all()
         self.out("所有参数已重置！")
@@ -379,6 +379,8 @@ class DBCore:
             for item in self.items_others:
                 item.SetFont(self.font)
             for item in self.items_checkboxes:
+                item.SetFont(self.font)
+            for item in self.items_choices:
                 item.SetFont(self.font)
             self.text_out.SetFont(self.font_small)
 
@@ -634,6 +636,17 @@ class DBCore:
                     return False
         return True
 
+    def odd_even_check(self, array, odd_evens):
+        for i in range(0, 6):
+            oe = odd_evens[i]
+            if not self.valid(oe):
+                continue
+            # specified odd/even requirement for this number index
+            num = array[i]
+            if num%2 is not oe:
+                return False
+        return True
+
     def dball_calc(self, params):
         rowcol_all = params["rowcol_all"]
         danma_list = params["danma_list"]
@@ -650,8 +663,7 @@ class DBCore:
         sum_high = params["sum_high"]
         ac_val = params["ac_val"]
         diff_tail_n = params["diff_tail_n"]
-        first_odd = params["first_odd"]
-        last_odd = params["last_odd"]
+        odd_evens = params["odd_evens"]
         cross_n = params["cross_n"]
         outter_n = params["outter_n"]
         cont_n = params["cont_n"]
@@ -806,18 +818,8 @@ class DBCore:
                self.count_big_evens_n(array) not in big_evens_n:
                 continue
 
-            if self.valid(first_odd):
-                odd = array[0] % 2
-                if first_odd and not odd:
-                    continue
-                if not first_odd and odd:
-                    continue
-            if self.valid(last_odd):
-                odd = array[-1] % 2
-                if last_odd and not odd:
-                    continue
-                if not last_odd and odd:
-                    continue
+            if not self.odd_even_check(array, odd_evens):
+                continue
 
             sum_n = self.count_sum(array)
             if self.valid(sum_low) and sum_n < sum_low:
@@ -1009,6 +1011,9 @@ class DBCore:
                 result = -1
         return result
 
+    def get_odd_even_choices(self):
+        return list(map(lambda choice: self.get_choice(choice), self.odd_even_choices))
+
     def do_generate(self, event):
         self.clear()
 
@@ -1023,8 +1028,7 @@ class DBCore:
         diff_tails = self.get_diff_tails()
         crosses = self.get_crosses()
         outters = self.get_outters()
-        first_odd = self.get_choice(self.first_odd)
-        last_odd = self.get_choice(self.last_odd)
+        odd_evens = self.get_odd_even_choices()
         conts = self.get_conts()
         
         three0 = self.get_three0()
@@ -1103,8 +1107,7 @@ class DBCore:
             "sum_high": -1, #sum_high,
             "ac_val": acs,
             "diff_tail_n": diff_tails,
-            "first_odd": first_odd,
-            "last_odd": last_odd,
+            "odd_evens": odd_evens,
             "cross_n": crosses,
             "outter_n": outters,
             "cont_n": conts,
@@ -1192,6 +1195,11 @@ class DBPanel(wx.Panel):
                   lambda event, x=new: self.core.do_update_checkbox(new),
                   new)
         self.core.items_checkboxes.append(new)
+        return new
+
+    def new_choice(self, choices):
+        new = wx.Choice(self, wx.ID_ANY, choices=choices)
+        self.core.items_choices.append(new)
         return new
 
     def new_button(self, value):
@@ -1743,10 +1751,9 @@ class DBOtherPanel(DBPanel):
             box = self.new_checkbox("%s" % i)
             self.core.last_nums.append(box)
 
-        self.core.first_odd = wx.Choice(self, wx.ID_ANY,
-                                        choices=["任意", "奇数", "偶数"])
-        self.core.last_odd = wx.Choice(self, wx.ID_ANY,
-                                       choices=["任意", "奇数", "偶数"])
+        self.core.odd_even_choices = []
+        for i in range(0, 6):
+            self.core.odd_even_choices.append(self.new_choice(["任意", "奇数", "偶数"]))
 
         self.core.outters = []
         for i in range(0, g_elements + 1):
@@ -1816,13 +1823,13 @@ class DBOtherPanel(DBPanel):
         sizer_conds_2.Add(self.new_static("上期重复："))
         sizer_conds_2.Add(sizer_last_nums, border=g_border, flag=g_flag)
 
-        sizer_shoumojiou = wx.FlexGridSizer(1, 4, 0, 0)
-        sizer_shoumojiou.Add(self.new_static("     "), flag=g_flag)
-        sizer_shoumojiou.Add(self.core.first_odd, flag=g_flag)
-        sizer_shoumojiou.Add(self.new_static("    末位奇偶：    "), flag=g_flag)
-        sizer_shoumojiou.Add(self.core.last_odd, flag=g_flag)
-        sizer_conds_2.Add(self.new_static("首位奇偶："))
-        sizer_conds_2.Add(sizer_shoumojiou, flag=g_flag)
+        n_odd_even = len(self.core.odd_even_choices)
+        sizer_odd_even = wx.GridSizer(1, n_odd_even*2, 0, 0)
+        for i in range(0, n_odd_even):
+            sizer_odd_even.Add(self.new_static("  第%s位： " % (i+1)), flag=g_flag)
+            sizer_odd_even.Add(self.core.odd_even_choices[i], flag=g_flag)
+        sizer_conds_2.Add(self.new_static("各位奇偶："))
+        sizer_conds_2.Add(sizer_odd_even, flag=g_flag)
 
         self.SetSizer(sizer_conds_2)
 
