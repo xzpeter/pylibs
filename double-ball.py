@@ -76,6 +76,7 @@ v1.0.6 (2020-10-25):
 v1.1 (2023-11-12):
 - 增加“出3个或者4个参数“子窗口，其中包括：“大小奇偶“，“除3余”，“除4余”，“除5余数”，“三区间”，“四分区”，“四角”
   (注意：此窗口每一行选择超过2个子类会导致缩水必定失败；当2个子类被选中时，每个子类必定出3个数)
+- 在“N行列分区参数”子窗口下，增加两条：“大小奇偶”（允许空0-2组），“七小区”（允许空0-5组）
 """
 
 g_title = "双色球缩水工具 - %s" % g_version
@@ -113,7 +114,21 @@ try:
 except:
     pass
 
+g_odd_even_list = {
+    "小奇": lambda x: x>=1 and x<=15 and x%2==1,
+    "大奇": lambda x: x>=17 and x<=33 and x%2==1,
+    "小偶": lambda x: x>=2 and x<=16 and x%2==0,
+    "大偶": lambda x: x>=18 and x<=30 and x%2==0,
+}
+
+#
 # M行列空N组
+#
+# @groups: If it is a list, each entry is a list of element numbers
+#          If it is a hash, each entry is {"name": lambda}
+#
+# @max: maximum number of empty groups for this specific category
+#
 g_rowcol_list = {
     "5-cols": {
         "name": "五行列空列",
@@ -124,6 +139,7 @@ g_rowcol_list = {
             [4, 9, 14, 19, 24, 29],
             [5, 10, 15, 20, 25, 30],
         ],
+        "max": 4,
     },
     "6-cols": {
         "name": "六行列空列",
@@ -135,6 +151,7 @@ g_rowcol_list = {
             [5, 11, 17, 23, 29],
             [6, 12, 18, 24, 30],
         ],
+        "max": 4,
     },
     "6-rows": {
         "name": "六行列空行",
@@ -145,7 +162,8 @@ g_rowcol_list = {
             [19, 20, 21, 22, 23, 24],
             [25, 26, 27, 28, 29, 30],
             [31, 32, 33],
-        ]
+        ],
+        "max": 4,
     },
     "6-corners": {
         "name": "四角空区",
@@ -154,7 +172,8 @@ g_rowcol_list = {
             [4, 5, 6, 10, 11, 12, 16, 17, 18],
             [19, 20, 21, 25, 26, 27, 31, 32, 33],
             [22, 23, 24, 28, 29, 30],
-        ]
+        ],
+        "max": 4,
     },
     "4-cols": {
         "name": "四行列空列",
@@ -163,7 +182,8 @@ g_rowcol_list = {
             [2, 6, 10, 14, 18, 22, 26, 30],
             [3, 7, 11, 15, 19, 23, 27, 31],
             [4, 8, 12, 16, 20, 24, 28, 32],
-        ]
+        ],
+        "max": 4,
     },
     "8-special": {
         "name": "八行列四分区空行（无17）",
@@ -172,19 +192,31 @@ g_rowcol_list = {
             [9, 10, 11, 12, 13, 14, 15, 16],
             [18, 19, 20, 21, 22, 23, 24, 25],
             [26, 27, 28, 29, 30, 31, 32, 33],
-        ]
+        ],
+        "max": 4,
     },
+    "odd-even": {
+        "name": "大小奇偶",
+        "groups": g_odd_even_list,
+        "max": 2,
+    },
+    "7-small-sections": {
+        "name": "七小区",
+        "groups": {
+            "一小区": lambda x: x>=1 and x<=4,
+            "二小区": lambda x: x>=5 and x<=9,
+            "三小区": lambda x: x>=10 and x<=14,
+            "四小区": lambda x: x>=15 and x<=19,
+            "五小区": lambda x: x>=20 and x<=24,
+            "六小区": lambda x: x>=25 and x<=29,
+            "七小区": lambda x: x>=30 and x<=33,
+        },
+        "max": 5,
+    }
 }
-# How many empty groups (maximum)?
-g_rowcol_empty_n = 4
 
 g_three_or_four_list = {
-    "大小奇偶": {
-        "小奇": lambda x: x>=1 and x<=15 and x%2==1,
-        "大奇": lambda x: x>=17 and x<=33 and x%2==1,
-        "小偶": lambda x: x>=2 and x<=16 and x%2==0,
-        "大偶": lambda x: x>=18 and x<=30 and x%2==0,
-    },
+    "大小奇偶": g_odd_even_list,
     "除3余数": {
         "除3余0": lambda x: x%3==0,
         "除3余1": lambda x: x%3==1,
@@ -546,14 +578,30 @@ class DBCore:
         model = g_rowcol_list[x]
         groups = model["groups"]
         n_groups = len(groups)
-        result = [0] * n_groups
-        for n in n_list:
-            for i in range(0, n_groups):
-                if n in groups[i]:
-                    result[i] += 1
+
+        # If the groups are described in a list
+        if type(groups) == type([]):
+            result = [0] * n_groups
+            for n in n_list:
+                for i in range(0, n_groups):
+                    if n in groups[i]:
+                        result[i] += 1
                     break
-        # count how many zeros
-        return result.count(0)
+            # count how many zeros
+            return result.count(0)
+
+        # Then it must be a hash..
+        assert(type(groups) == type({}))
+        result = {}
+        for name in groups:
+            result[name] = 0
+        for n in n_list:
+            for name in groups:
+                fn = groups[name]
+                if fn(n):
+                    result[name] += 1
+                    break
+        return result.values().count(0)
 
     def count_lambda_satisfy(self, array, fn):
         """How many numbers (of given array) satisfy the lambda()?"""
@@ -562,6 +610,14 @@ class DBCore:
             if fn(i):
                 count += 1
         return count
+
+    def rowcol_check(self, array, rowcol_all):
+        for x in g_rowcol_list:
+            result = rowcol_all[x]
+            if self.valid(result):
+                if self.count_rowcol_empty(x, array) not in result:
+                    return False
+        return True
 
     def three_or_four_check(self, array, three_or_four):
         for name in three_or_four:
@@ -769,17 +825,8 @@ class DBCore:
             if self.valid(sum_high) and sum_n > sum_high:
                 continue
 
-            drop_this = False
-            for x in g_rowcol_list:
-                result = rowcol_all[x]
-                if self.valid(result):
-                    if self.count_rowcol_empty(x, array) not in result:
-                        drop_this = True
-                        break
-
-            if drop_this:
+            if not self.rowcol_check(array, rowcol_all):
                 continue
-
             if not self.three_or_four_check(array, three_or_four):
                 continue
 
@@ -1640,9 +1687,14 @@ class DBRowColPanel(DBPanel):
 
     def __create_objects(self):
         self.core.rowcol = {}
+        self.max_group_n = 0
         for x in g_rowcol_list:
             boxes = []
-            for i in range(0, g_rowcol_empty_n + 1):
+            entry = g_rowcol_list[x]
+            max_n = entry["max"]
+            if max_n > self.max_group_n:
+                self.max_group_n = max_n
+            for i in range(0, max_n + 1):
                 box = self.new_checkbox("%s" % i)
                 boxes.append(box)
             setall = self.new_button_setall(boxes)
@@ -1655,13 +1707,16 @@ class DBRowColPanel(DBPanel):
 
     def __do_layout(self):
         sizer_conds = wx.FlexGridSizer(20, 2, 5, 5)
-
         for x in self.core.rowcol:
             this = self.core.rowcol[x]
-            sizer = wx.GridSizer(1, g_rowcol_empty_n + 3, g_border2, g_border2)
+            sizer = wx.GridSizer(1, self.max_group_n + 3, g_border2, g_border2)
             boxes = this["checkboxes"]
             for box in boxes:
                 sizer.Add(box, flag=g_flag)
+            residue = self.max_group_n + 1 - len(boxes)
+            while residue > 0:
+                sizer.Add(wx.StaticText(self, wx.ID_ANY, ""))
+                residue -= 1
             sizer.Add(this["button_setall"], flag=g_flag)
             sizer.Add(this["button_clearall"], flag=g_flag)
             sizer_conds.Add(self.new_static("%s：" % g_rowcol_list[x]["name"],
