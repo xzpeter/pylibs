@@ -80,6 +80,7 @@ v1.1 (2023-11-12):
 - 在“其他参数”子窗口下
   - 将“首位”和“末尾”奇偶数扩展为可以指定任意数字的奇偶数（共6个）
   - 允许“上期重复”和“各位奇偶”标签可以依据选项改变颜色
+  - 加入“和值范围”选项（共6个区间，从40-160）
 """
 
 g_title = "双色球缩水工具 - %s" % g_version
@@ -667,6 +668,20 @@ class DBCore:
                 return False
         return True
 
+    def sum_ranges_check(self, array, sum_ranges):
+        if sum_ranges.count(0) == len(sum_ranges):
+            # Didn't specify at all, allow all to pass
+            return True
+        total = sum(array)
+        ranges_n = len(g_sum_ranges)
+        for i in range(0, ranges_n):
+            if not sum_ranges[i]:
+                continue
+            rg = g_sum_ranges[i]
+            if total >= rg[0] and total <= rg[1]:
+                return True
+        return False
+
     def dball_calc(self, params):
         rowcol_all = params["rowcol_all"]
         danma_list = params["danma_list"]
@@ -713,6 +728,7 @@ class DBCore:
         last_win = params["last_win"]
         last_nums = params["last_nums"]
         three_or_four = params["three_or_four"]
+        sum_ranges = params["sum_ranges"]
 
         rand_set = combinations(num_list, g_elements - len(danma_list))
         input_set = map(lambda x: x + tuple(danma_list), rand_set)
@@ -850,6 +866,8 @@ class DBCore:
             if not self.rowcol_check(array, rowcol_all):
                 continue
             if not self.three_or_four_check(array, three_or_four):
+                continue
+            if not self.sum_ranges_check(array, sum_ranges):
                 continue
 
             output_set.append(array)
@@ -994,6 +1012,9 @@ class DBCore:
     def get_last_nums(self):
         return self.get_list_of_array(self.last_nums)
 
+    def get_sum_ranges(self):
+        return list(map(lambda x: x.GetValue(), self.sum_ranges))
+
     def get_choice(self, item):
         value = item.GetSelection()
         if value == 0 or value == -1:
@@ -1111,6 +1132,7 @@ class DBCore:
 
         rowcol_all = self.get_rowcol_all()
         three_or_four = self.get_three_or_four()
+        sum_ranges = self.get_sum_ranges()
 
         params = {
             "rowcol_all": rowcol_all,
@@ -1157,6 +1179,7 @@ class DBCore:
             "last_win": last_win,
             "last_nums": last_nums,
             "three_or_four": three_or_four,
+            "sum_ranges": sum_ranges,
         }
         self.result = self.dball_calc(params)
         self.show_result(self.result)
