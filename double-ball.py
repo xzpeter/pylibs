@@ -10,7 +10,7 @@ from itertools import combinations, permutations
 # TODO:
 # - Rewrite some codes to use lambda.  Refers to g_rowcol_list impl
 
-g_version = "v1.1"
+g_version = "v1.2"
 g_changelog = """
 v0.5 (2019-04-08):
 - 添加“打印”和“更新日志”按键
@@ -82,6 +82,9 @@ v1.1 (2023-11-12):
   - 允许“上期重复”和“各位奇偶”标签可以依据选项改变颜色
   - 加入“和值范围”选项（共6个区间，从40-160）
 - 增加“基本分区参数2”，可以指定七小区选项
+
+v1.2 (2023-11-12):
+- 修改“出3个或者4个参数”子窗口，修正缩水逻辑，同时更名为“一组出3-5个参数”
 """
 
 g_title = "双色球缩水工具 - %s" % g_version
@@ -91,6 +94,7 @@ g_cross_list = [1,6,8,11,15,16,21,22,26,29,31]
 g_outter_list = [1,2,3,4,5,6,7,12,13,18,19,24,25,30,31,32,33]
 g_size = (1280, 850)
 g_checkbox_size = (100, 40)
+g_checkbox_size_three_or_four = (180, 40)
 g_lastwin_size = (250, -1)
 g_output_size = (1280, 600)
 g_border = 3
@@ -260,6 +264,8 @@ g_three_or_four_list = {
         "右下角": lambda x: x in [22,23,24,28,29,30],
     },
 }
+
+g_three_or_four_str = ["至少1组出3个（最多2组）", "1组出4个", "1组出5个"]
 
 # 和值范围
 g_sum_ranges = [[40, 70], [71, 80], [81, 100], [101, 120], [121, 140], [141, 160]]
@@ -629,14 +635,6 @@ class DBCore:
                     break
         return result.values().count(0)
 
-    def count_lambda_satisfy(self, array, fn):
-        """How many numbers (of given array) satisfy the lambda()?"""
-        count = 0
-        for i in array:
-            if fn(i):
-                count += 1
-        return count
-
     def rowcol_check(self, array, rowcol_all):
         for x in g_rowcol_list:
             result = rowcol_all[x]
@@ -650,14 +648,36 @@ class DBCore:
             required = three_or_four[name]
             if not self.valid(required):
                 continue
-            group = g_three_or_four_list[name]
-            for name in required:
-                # each section of the group
-                fn = group[name]
-                if self.count_lambda_satisfy(array, fn) in [3,4]:
+            # user specified something, satisfy any of them should work.
+            # see g_three_or_four_str[].
+            fn_list = list(g_three_or_four_list[name].values())
+            group_n = len(fn_list)
+            buckets = [0] * group_n
+
+            # first, put the current array into the buckets
+            for n in array:
+                for i in range(0, group_n):
+                    fn = fn_list[i]
+                    if fn(n):
+                        buckets[i] += 1
+                        break
+            max_same = max(buckets)
+
+            # now, `buckets' contains the result..
+            if 0 in required:
+                # 3 nums in one/two groups
+                if max_same == 3:
                     continue
-                else:
-                    return False
+            if 1 in required:
+                # 4 nums in one group
+                if max_same == 4:
+                    continue
+            if 2 in required:
+                # 5 nums in one group
+                if max_same == 5:
+                    continue
+            # `required' specified, but no one satisfied..
+            return False
         return True
 
     def odd_even_check(self, array, odd_evens):
@@ -913,17 +933,6 @@ class DBCore:
                 result.append(start_idx + i)
         return result
 
-    def get_list_of_names(self, array):
-        """
-        Like above, but parse checkboxes and output list of names rather
-        than number indexes.
-        """
-        result = []
-        for element in array:
-            if element.GetValue():
-                result.append(element.GetName())
-        return result
-
     def get_rowcol_all(self):
         result = {}
         for x in g_rowcol_list:
@@ -936,7 +945,7 @@ class DBCore:
         for name in self.three_or_four:
             entry = self.three_or_four[name]
             boxes = entry["checkboxes"]
-            result[name] = self.get_list_of_names(boxes)
+            result[name] = self.get_list_of_array(boxes)
         return result
 
     def get_nums(self):
@@ -1258,12 +1267,12 @@ class DBPanel(wx.Panel):
             self.core.dynamic_statics.append(entry)
         return new
 
-    def new_checkbox(self, value):
+    def new_checkbox(self, value, size=g_checkbox_size):
         if g_has_custom_checkbox:
-            new = wx.lib.checkbox.GenCheckBox(self, wx.ID_ANY, value, size=g_checkbox_size)
+            new = wx.lib.checkbox.GenCheckBox(self, wx.ID_ANY, value, size=size)
             new.SetName(value)
         else:
-            new = wx.CheckBox(self, wx.ID_ANY, value, size=g_checkbox_size)
+            new = wx.CheckBox(self, wx.ID_ANY, value, size=size)
         self.Bind(wx.EVT_CHECKBOX,
                   lambda event, x=new: self.core.do_update_checkbox(new),
                   new)
@@ -1760,17 +1769,18 @@ class DBThreeOrFourPanel(DBPanel):
         self.__do_layout()
 
     def __create_objects(self):
-        self.max_group_n = 0
         self.core.three_or_four = {}
         for name in g_three_or_four_list:
             boxes = []
-            groups = g_three_or_four_list[name]
-            groups_n = len(groups)
-            # Remember the group with the most entries
-            if groups_n > self.max_group_n:
-                self.max_group_n = groups_n
-            for group_name in groups:
-                box = self.new_checkbox(group_name)
+            group = g_three_or_four_list[name]
+            if len(group) <= 3:
+                # allows 0/1/2
+                last = 3
+            else:
+                # only allow 0/1
+                last = 2
+            for n in g_three_or_four_str[0:last]:
+                box = self.new_checkbox(n, size=g_checkbox_size_three_or_four)
                 boxes.append(box)
             setall = self.new_button_setall(boxes)
             clearall = self.new_button_clearall(boxes)
@@ -1786,13 +1796,13 @@ class DBThreeOrFourPanel(DBPanel):
         for x in self.core.three_or_four:
             this = self.core.three_or_four[x]
             boxes = this["checkboxes"]
-            sizer = wx.GridSizer(1, self.max_group_n + 2, g_border2, g_border2)
+            sizer = wx.GridSizer(1, len(g_three_or_four_str)+2, g_border2, g_border2)
             for box in boxes:
                 sizer.Add(box, flag=g_flag)
-            residue = self.max_group_n - len(boxes)
-            while residue > 0:
+            if len(boxes) < len(g_three_or_four_str):
+                assert(len(g_three_or_four_str) - len(boxes) == 1)
                 sizer.Add(wx.StaticText(self, wx.ID_ANY, ""))
-                residue -= 1
+
             sizer.Add(this["button_setall"], flag=g_flag)
             sizer.Add(this["button_clearall"], flag=g_flag)
             sizer_conds.Add(self.new_static("%s：" % x, boxes))
@@ -2155,7 +2165,9 @@ class MyApp(wx.App):
         notebook.AddPage(mod_panel, "除余参数")
         notebook.AddPage(position_panel, "基本分区参数1")
         notebook.AddPage(position_panel2, "基本分区参数2")
-        notebook.AddPage(three_or_four_panel, "出3个或者4个参数")
+        # NOTE: originally there was no support of 5 nums in same group, so
+        # the variables are still named with *three_or_four* for this window.
+        notebook.AddPage(three_or_four_panel, "一组出3-5个参数")
         notebook.AddPage(rowcol_panel, "N行列分区参数")
         notebook.AddPage(other_panel, "其他参数")
         notebook.AddPage(control_panel, "控制页面")
