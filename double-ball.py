@@ -10,7 +10,7 @@ from itertools import combinations, permutations
 # TODO:
 # - Rewrite some codes to use lambda.  Refers to g_rowcol_list impl
 
-g_version = "v1.2"
+g_version = "v1.3"
 g_changelog = """
 v0.5 (2019-04-08):
 - 添加“打印”和“更新日志”按键
@@ -85,6 +85,10 @@ v1.1 (2023-11-12):
 
 v1.2 (2023-11-12):
 - 修改“出3个或者4个参数”子窗口，修正缩水逻辑，同时更名为“一组出3-5个参数”
+
+v1.3 (2023-11-14):
+- 修复“N行列分区参数”无法计算的问题
+- 修改“一组出3-5个参数”选择框文字，去除“（最多2组）”字样，略微调小选择框
 """
 
 g_title = "双色球缩水工具 - %s" % g_version
@@ -94,7 +98,7 @@ g_cross_list = [1,6,8,11,15,16,21,22,26,29,31]
 g_outter_list = [1,2,3,4,5,6,7,12,13,18,19,24,25,30,31,32,33]
 g_size = (1280, 850)
 g_checkbox_size = (100, 40)
-g_checkbox_size_three_or_four = (180, 40)
+g_checkbox_size_three_or_four = (160, 40)
 g_lastwin_size = (250, -1)
 g_output_size = (1280, 600)
 g_border = 3
@@ -265,7 +269,7 @@ g_three_or_four_list = {
     },
 }
 
-g_three_or_four_str = ["至少1组出3个（最多2组）", "1组出4个", "1组出5个"]
+g_three_or_four_str = ["至少1组出3个", "1组出4个", "1组出5个"]
 
 # 和值范围
 g_sum_ranges = [[40, 70], [71, 80], [81, 100], [101, 120], [121, 140], [141, 160]]
@@ -633,7 +637,7 @@ class DBCore:
                 if fn(n):
                     result[name] += 1
                     break
-        return result.values().count(0)
+        return list(result.values()).count(0)
 
     def rowcol_check(self, array, rowcol_all):
         for x in g_rowcol_list:
