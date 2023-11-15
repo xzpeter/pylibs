@@ -10,7 +10,7 @@ from itertools import combinations, permutations
 # TODO:
 # - Rewrite some codes to use lambda.  Refers to g_rowcol_list impl
 
-g_version = "v1.3"
+g_version = "v1.4"
 g_changelog = """
 v0.5 (2019-04-08):
 - 添加“打印”和“更新日志”按键
@@ -89,6 +89,10 @@ v1.2 (2023-11-12):
 v1.3 (2023-11-14):
 - 修复“N行列分区参数”无法计算的问题
 - 修改“一组出3-5个参数”选择框文字，去除“（最多2组）”字样，略微调小选择框
+
+v1.4 (2023-11-15):
+- 修复“N行列分区参数”计算错误的问题
+- 修复“一组出3-5个参数”的“大小奇偶”计算问题，只出现在当选择了32时
 """
 
 g_title = "双色球缩水工具 - %s" % g_version
@@ -131,7 +135,7 @@ g_odd_even_list = {
     "小奇": lambda x: x>=1 and x<=15 and x%2==1,
     "大奇": lambda x: x>=17 and x<=33 and x%2==1,
     "小偶": lambda x: x>=2 and x<=16 and x%2==0,
-    "大偶": lambda x: x>=18 and x<=30 and x%2==0,
+    "大偶": lambda x: x>=18 and x<=32 and x%2==0,
 }
 
 g_seven_section_list = {
@@ -622,7 +626,7 @@ class DBCore:
                 for i in range(0, n_groups):
                     if n in groups[i]:
                         result[i] += 1
-                    break
+                        break
             # count how many zeros
             return result.count(0)
 
